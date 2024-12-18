@@ -1,0 +1,3 @@
+﻿<Project>
+  <Import Project="../build/thaicodelab_api.props" />
+</Project>
