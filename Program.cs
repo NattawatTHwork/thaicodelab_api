@@ -77,4 +77,6 @@ app.UseMiddleware<PermissionMiddleware>();
 
 app.MapControllers();
 
+app.MapGet("/", () => "ThaiCodeLab API");
+
 app.Run();

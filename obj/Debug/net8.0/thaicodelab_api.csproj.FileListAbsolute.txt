@@ -110,3 +110,4 @@
 /Users/nattawat/Documents/Learns/ThaiCodeLab/thaicodelab_api/obj/Debug/net8.0/thaicodelab_api.pdb
 /Users/nattawat/Documents/Learns/ThaiCodeLab/thaicodelab_api/obj/Debug/net8.0/thaicodelab_api.genruntimeconfig.cache
 /Users/nattawat/Documents/Learns/ThaiCodeLab/thaicodelab_api/obj/Debug/net8.0/ref/thaicodelab_api.dll
+/Users/nattawat/Documents/Learns/ThaiCodeLab/thaicodelab_api/obj/Debug/net8.0/thaicodelab_api.sourcelink.json
