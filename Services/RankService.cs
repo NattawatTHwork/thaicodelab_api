@@ -5,9 +5,9 @@ namespace thaicodelab_api.Services
 {
     public class RankService
     {
-        private readonly ErpDbContext _context;
+        private readonly ApplicationDbContext _context;
 
-        public RankService(ErpDbContext context)
+        public RankService(ApplicationDbContext context)
         {
             _context = context;
         }

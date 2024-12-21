@@ -14,7 +14,7 @@ public class PermissionMiddleware
         _next = next;
     }
 
-    public async Task InvokeAsync(HttpContext context, ErpDbContext dbContext)
+    public async Task InvokeAsync(HttpContext context, ApplicationDbContext dbContext)
     {
         // 🔥 ตรวจสอบ Endpoint ก่อน ถ้าไม่เจอให้ผ่านไป
         var endpoint = context.GetEndpoint();

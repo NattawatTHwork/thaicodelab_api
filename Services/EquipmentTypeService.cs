@@ -5,9 +5,9 @@ namespace thaicodelab_api.Services
 {
     public class EquipmentTypeService
     {
-        private readonly ErpDbContext _context;
+        private readonly ApplicationDbContext _context;
 
-        public EquipmentTypeService(ErpDbContext context)
+        public EquipmentTypeService(ApplicationDbContext context)
         {
             _context = context;
         }

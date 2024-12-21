@@ -6,9 +6,9 @@ namespace thaicodelab_api.Services
 {
     public class RegisterService
     {
-        private readonly ErpDbContext _context;
+        private readonly ApplicationDbContext _context;
 
-        public RegisterService(ErpDbContext context)
+        public RegisterService(ApplicationDbContext context)
         {
             _context = context;
         }

@@ -9,10 +9,10 @@ namespace thaicodelab_api.Services
 {
     public class LoginService
     {
-        private readonly ErpDbContext _context;
+        private readonly ApplicationDbContext _context;
         private readonly IConfiguration _configuration;
 
-        public LoginService(ErpDbContext context, IConfiguration configuration)
+        public LoginService(ApplicationDbContext context, IConfiguration configuration)
         {
             _context = context;
             _configuration = configuration;

@@ -5,9 +5,9 @@ namespace thaicodelab_api.Services
 {
     public class PermissionService
     {
-        private readonly ErpDbContext _context;
+        private readonly ApplicationDbContext _context;
 
-        public PermissionService(ErpDbContext context)
+        public PermissionService(ApplicationDbContext context)
         {
             _context = context;
         }

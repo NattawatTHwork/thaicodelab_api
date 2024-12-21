@@ -5,9 +5,9 @@ namespace thaicodelab_api.Services
 {
     public class UserStatusService
     {
-        private readonly ErpDbContext _context;
+        private readonly ApplicationDbContext _context;
 
-        public UserStatusService(ErpDbContext context)
+        public UserStatusService(ApplicationDbContext context)
         {
             _context = context;
         }
