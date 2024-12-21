@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using BCrypt.Net;
 
 public class ErpDbContext : DbContext
 {
@@ -197,7 +198,7 @@ public class ErpDbContext : DbContext
                         user_id = 1,
                         user_code = "USR0000001",
                         email = "superadmin@superadmin.com",
-                        user_password = "jZae727K08KaOmKSgOaGzww/XVqGr/PKEgIMkjrcbJI=",
+                        user_password = BCrypt.Net.BCrypt.HashPassword("SuperSecurePassword123"),
                         role_id = 1,
                         department_id = 1,
                         rank_id = 1,

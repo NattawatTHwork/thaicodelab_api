@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-using System.Security.Cryptography;
+using BCrypt.Net;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
@@ -62,9 +62,8 @@ namespace thaicodelab_api.Services
 
         private bool VerifyPassword(string enteredPassword, string storedPassword)
         {
-            using var sha256 = SHA256.Create();
-            var enteredHash = Convert.ToBase64String(sha256.ComputeHash(Encoding.UTF8.GetBytes(enteredPassword)));
-            return enteredHash == storedPassword;
+            // ใช้ BCrypt สำหรับตรวจสอบรหัสผ่าน
+            return BCrypt.Net.BCrypt.Verify(enteredPassword, storedPassword);
         }
     }
 }

@@ -1,6 +1,5 @@
 using Microsoft.EntityFrameworkCore;
-using System.Security.Cryptography;
-using System.Text;
+using BCrypt.Net;
 using System.Text.RegularExpressions;
 
 namespace thaicodelab_api.Services
@@ -71,10 +70,14 @@ namespace thaicodelab_api.Services
 
         private string HashPassword(string password)
         {
-            using var sha256 = SHA256.Create();
-            var bytes = Encoding.UTF8.GetBytes(password);
-            var hash = sha256.ComputeHash(bytes);
-            return Convert.ToBase64String(hash);
+            // ใช้ BCrypt เพื่อแฮชรหัสผ่าน
+            return BCrypt.Net.BCrypt.HashPassword(password);
+        }
+
+        public bool VerifyPassword(string password, string hashedPassword)
+        {
+            // ตรวจสอบรหัสผ่านกับแฮช
+            return BCrypt.Net.BCrypt.Verify(password, hashedPassword);
         }
     }
 }
