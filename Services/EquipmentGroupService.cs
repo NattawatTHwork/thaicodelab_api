@@ -16,6 +16,7 @@ namespace thaicodelab_api.Services
         {
             return await _context.tb_equipment_groups
                 .Where(eg => !eg.is_deleted)
+                .OrderBy(eg => eg.equipment_group_id)
                 .ToListAsync();
         }
 

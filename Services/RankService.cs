@@ -16,6 +16,7 @@ namespace thaicodelab_api.Services
         {
             return await _context.tb_ranks
                 .Where(r => !r.is_deleted)
+                .OrderBy(d => d.rank_id)
                 .ToListAsync();
         }
 

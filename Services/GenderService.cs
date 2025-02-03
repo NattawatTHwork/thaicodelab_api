@@ -16,6 +16,7 @@ namespace thaicodelab_api.Services
         {
             return await _context.tb_genders
                 .Where(g => !g.is_deleted)
+                .OrderBy(g => g.gender_id)
                 .ToListAsync();
         }
 

@@ -53,7 +53,9 @@ namespace thaicodelab_api.Services
                 issuer: jwtIssuer,
                 audience: jwtAudience,
                 claims: claims,
-                expires: DateTime.UtcNow.AddHours(2),
+                expires: DateTime.UtcNow.AddDays(7),
+                // expires: DateTime.UtcNow.AddHours(2),
+                // expires: DateTime.UtcNow.AddMinutes(1),
                 signingCredentials: credentials
             );
 

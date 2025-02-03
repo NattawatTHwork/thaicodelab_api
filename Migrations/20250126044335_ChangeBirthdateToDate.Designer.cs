@@ -11,8 +11,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace thaicodelab_api.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20241221094836_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20250126044335_ChangeBirthdateToDate")]
+    partial class ChangeBirthdateToDate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -561,8 +561,8 @@ namespace thaicodelab_api.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("user_id"));
 
-                    b.Property<DateTime>("birthdate")
-                        .HasColumnType("timestamp with time zone");
+                    b.Property<DateOnly>("birthdate")
+                        .HasColumnType("date");
 
                     b.Property<DateTime>("created_at")
                         .HasColumnType("timestamp with time zone");
@@ -649,7 +649,7 @@ namespace thaicodelab_api.Migrations
                         new
                         {
                             user_id = 1,
-                            birthdate = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            birthdate = new DateOnly(2024, 1, 1),
                             created_at = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             created_by = 1,
                             department_id = 1,
@@ -666,7 +666,7 @@ namespace thaicodelab_api.Migrations
                             updated_at = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             updated_by = 1,
                             user_code = "USR0000001",
-                            user_password = "$2a$11$e58ZE84k0srXQKoN/K0A..N3mMhZTL9rh3R3swHdOwOHj1YXXGF3e",
+                            user_password = "$2a$11$tfK5h9B0tIRWH1pkTbX6ke3rk4AOvaFhiHqbOvqQeMQdao5YyBSb.",
                             user_status_id = 1
                         });
                 });

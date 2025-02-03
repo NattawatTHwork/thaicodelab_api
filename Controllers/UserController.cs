@@ -30,7 +30,7 @@ public class UserController : ControllerBase
     [HttpGet("{id}")]
     public async Task<IActionResult> GetById(int id)
     {
-        var user = await _userService.GetUserById(id);
+        var user = await _userService.GetUserProfileById(id);
         if (user == null)
             return NotFound(new
             {
@@ -46,38 +46,160 @@ public class UserController : ControllerBase
         });
     }
 
-    [HttpPost]
-    public async Task<IActionResult> Create([FromBody] User user)
+    [HttpGet("Name")]
+    [AllowAnonymous]
+    public async Task<IActionResult> GetName()
     {
+        try
+        {
+            // ดึง user_id จาก token
+            var userId = JwtHelper.GetUserIdFromToken(User);
+
+            // ใช้ user_id เพื่อเรียกข้อมูลผู้ใช้
+            var user = await _userService.GetUserNameById(userId);
+
+            if (user == null)
+            {
+                return NotFound(new
+                {
+                    status = false,
+                    message = "User not found"
+                });
+            }
+
+            return Ok(new
+            {
+                status = true,
+                message = "Successfully Retrieved",
+                data = user
+            });
+        }
+        catch (UnauthorizedAccessException ex)
+        {
+            return Unauthorized(new
+            {
+                status = false,
+                message = ex.Message
+            });
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, new
+            {
+                status = false,
+                message = "An error occurred while retrieving the profile.",
+                error = ex.Message
+            });
+        }
+    }
+
+    [HttpGet("Profile")]
+    public async Task<IActionResult> GetProfile()
+    {
+        try
+        {
+            // ดึง user_id จาก token
+            var userId = JwtHelper.GetUserIdFromToken(User);
+
+            // ใช้ user_id เพื่อเรียกข้อมูลผู้ใช้
+            var user = await _userService.GetUserProfileById(userId);
+
+            if (user == null)
+            {
+                return NotFound(new
+                {
+                    status = false,
+                    message = "User not found"
+                });
+            }
+
+            return Ok(new
+            {
+                status = true,
+                message = "Successfully Retrieved",
+                data = user
+            });
+        }
+        catch (UnauthorizedAccessException ex)
+        {
+            return Unauthorized(new
+            {
+                status = false,
+                message = ex.Message
+            });
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, new
+            {
+                status = false,
+                message = "An error occurred while retrieving the profile.",
+                error = ex.Message
+            });
+        }
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> Create([FromBody] UserRequest UserRequest)
+    {
+        if (UserRequest.user_password != UserRequest.confirm_user_password)
+        {
+            return BadRequest(new
+            {
+                status = false,
+                message = "Password and Confirm Password do not match"
+            });
+        }
+        var emailExists = await _userService.CheckIfEmailExists(UserRequest.email);
+        if (emailExists)
+        {
+            return Conflict(new
+            {
+                status = false,
+                message = "Email already exists"
+            });
+        }
         var userId = JwtHelper.GetUserIdFromToken(User);
-        user.user_code = await _userService.GenerateUserCode();
-        user.created_at = DateTime.UtcNow;
-        user.created_by = userId;
+        UserRequest.user_code = await _userService.GenerateUserCode();
+        // UserRequest.created_at = DateTime.UtcNow;
+        // UserRequest.created_by = userId;
+        // UserRequest.updated_by = userId;
 
-        await _userService.AddUser(user);
+        await _userService.AddUser(UserRequest, userId);
 
-        return CreatedAtAction(nameof(GetById), new { id = user.user_id }, new
+        return CreatedAtAction(nameof(GetById), new { id = UserRequest.user_id }, new
         {
             status = true,
             message = "Successfully Created",
-            data = user
+            data = UserRequest
         });
     }
 
     [HttpPut("{id}")]
-    public async Task<IActionResult> Update(int id, [FromBody] User updatedUser)
+    public async Task<IActionResult> Update(int id, [FromBody] UserRequest UserRequest)
     {
         var userId = JwtHelper.GetUserIdFromToken(User);
         var user = await _userService.GetUserById(id);
-
         if (user == null)
+        {
             return NotFound(new
             {
                 status = false,
                 message = "User not found"
             });
+        }
 
-        await _userService.UpdateUser(user, updatedUser, userId);
+        var emailExists = await _userService.CheckIfEmailExistsExceptCurrent(UserRequest.email, id);
+        if (emailExists)
+        {
+            return Conflict(new
+            {
+                status = false,
+                message = "Email already exists"
+            });
+        }
+
+        await _userService.UpdateUserProfile(user, UserRequest, userId);
 
         return Ok(new
         {
@@ -117,8 +239,8 @@ public class UserController : ControllerBase
         });
     }
 
-    [HttpPut("ChangePassword/{id}")]
-    public async Task<IActionResult> ChangePassword(int id, [FromBody] string newPassword)
+    [HttpPut("Update-Email/{id}")]
+    public async Task<IActionResult> UpdateEmail(int id, [FromBody] UserRequest UserRequest)
     {
         var userId = JwtHelper.GetUserIdFromToken(User);
         var user = await _userService.GetUserById(id);
@@ -130,7 +252,51 @@ public class UserController : ControllerBase
                 message = "User not found"
             });
 
-        await _userService.ChangePassword(user, newPassword, userId);
+        var emailExists = await _userService.CheckIfEmailExistsExceptCurrent(UserRequest.email, id);
+        if (emailExists)
+        {
+            return Conflict(new
+            {
+                status = false,
+                message = "Email already exists"
+            });
+        }
+
+
+        await _userService.UpdateUserEmail(user, UserRequest.email, userId);
+
+        return Ok(new
+        {
+            status = true,
+            message = "Password successfully updated"
+        });
+    }
+
+    [HttpPut("Update-Password/{id}")]
+    public async Task<IActionResult> UpdatePassword(int id, [FromBody] UserRequest UserRequest)
+    {
+        var userId = JwtHelper.GetUserIdFromToken(User);
+        var user = await _userService.GetUserById(id);
+
+        if (user == null)
+        {
+            return NotFound(new
+            {
+                status = false,
+                message = "User not found"
+            });
+        }
+
+        if (UserRequest.user_password != UserRequest.confirm_user_password)
+        {
+            return BadRequest(new
+            {
+                status = false,
+                message = "Password and Confirm Password do not match"
+            });
+        }
+
+        await _userService.UpdateUserPassword(user, UserRequest.user_password, userId);
 
         return Ok(new
         {
@@ -140,19 +306,30 @@ public class UserController : ControllerBase
     }
 
     [HttpPut("UpdateProfile/{id}")]
-    public async Task<IActionResult> UpdateProfile(int id, [FromBody] User updatedUser)
+    public async Task<IActionResult> UpdateProfile(int id, [FromBody] UserRequest UserRequest)
     {
         var userId = JwtHelper.GetUserIdFromToken(User);
         var user = await _userService.GetUserById(id);
-
         if (user == null)
+        {
             return NotFound(new
             {
                 status = false,
                 message = "User not found"
             });
+        }
 
-        await _userService.UpdateUserProfile(user, updatedUser, userId);
+        var emailExists = await _userService.CheckIfEmailExistsExceptCurrent(UserRequest.email, id);
+        if (emailExists)
+        {
+            return Conflict(new
+            {
+                status = false,
+                message = "Email already exists"
+            });
+        }
+
+        await _userService.UpdateUserProfile(user, UserRequest, userId);
 
         return Ok(new
         {

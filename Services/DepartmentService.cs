@@ -16,6 +16,7 @@ namespace thaicodelab_api.Services
         {
             return await _context.tb_departments
                 .Where(d => !d.is_deleted)
+                .OrderBy(d => d.department_id)
                 .ToListAsync();
         }
 
@@ -31,14 +32,14 @@ namespace thaicodelab_api.Services
                 .OrderByDescending(d => d.department_code)
                 .FirstOrDefaultAsync();
 
-            string newCode = "DEP00001";
+            string newCode = "DEP0000001";
             if (latestDepartment != null && !string.IsNullOrEmpty(latestDepartment.department_code))
             {
                 var match = Regex.Match(latestDepartment.department_code, @"\d+");
                 if (match.Success)
                 {
                     int latestNumber = int.Parse(match.Value);
-                    newCode = $"DEP{(latestNumber + 1).ToString("D5")}";
+                    newCode = $"DEP{(latestNumber + 1).ToString("D7")}";
                 }
             }
             return newCode;

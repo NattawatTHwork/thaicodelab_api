@@ -36,7 +36,7 @@ public class User
 
     public int gender_id { get; set; }
 
-    public DateTime birthdate { get; set; }
+    public DateOnly birthdate { get; set; }
 
     public string phone_number { get; set; } = string.Empty;
 

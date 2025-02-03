@@ -37,6 +37,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             ValidateIssuer = true,
             ValidateAudience = true,
             ValidateLifetime = true,
+            ClockSkew = TimeSpan.Zero, // ถ้าไม่มีบรรทัดนี้ token จะสามารถใช้ต่อไปได้อีก 5 นาที เพื่อป้องกันความแตกต่างของเวลา
             ValidateIssuerSigningKey = true,
             ValidIssuer = builder.Configuration["Jwt:Issuer"],
             ValidAudience = builder.Configuration["Jwt:Audience"],

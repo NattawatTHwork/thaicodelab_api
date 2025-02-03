@@ -11,6 +11,6 @@ public class UserRegisterRequest
     public int rank_id { get; set; }
     public int user_status_id { get; set; }
     public string phone_number { get; set; } = string.Empty;
-    public DateTime birthdate { get; set; }
+    public DateOnly birthdate { get; set; }
     public int created_by { get; set; }
 }

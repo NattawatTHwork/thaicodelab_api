@@ -9,10 +9,12 @@ using thaicodelab_api.Services;
 public class RolePermissionController : ControllerBase
 {
     private readonly RolePermissionService _rolePermissionService;
+    private readonly UserService _userService;
 
-    public RolePermissionController(RolePermissionService rolePermissionService)
+    public RolePermissionController(RolePermissionService rolePermissionService, UserService userService)
     {
         _rolePermissionService = rolePermissionService;
+        _userService = userService;
     }
 
     [HttpPost]
@@ -28,6 +30,32 @@ public class RolePermissionController : ControllerBase
         {
             status = true, 
             message = "Role-Permissions updated successfully" 
+        });
+    }
+
+    [AllowAnonymous]
+    [HttpGet("permissionbytokenuser")]
+    public async Task<IActionResult> GetPermissionsByUserId()
+    {
+        var userId = JwtHelper.GetUserIdFromToken(User);
+        var roleId = await _userService.GetRoleIdByUserId(userId);
+
+        if (roleId == null)
+        {
+            return NotFound(new
+            {
+                status = false,
+                message = "Role not found for this user"
+            });
+        }
+
+        var permissions = await _rolePermissionService.GetPermissionsByRoleId(roleId.Value);
+
+        return Ok(new 
+        {
+            status = true, 
+            message = "Successfully Retrieved", 
+            data = permissions 
         });
     }
 

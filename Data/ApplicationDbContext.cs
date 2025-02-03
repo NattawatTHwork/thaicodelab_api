@@ -205,7 +205,7 @@ public class ApplicationDbContext : DbContext
                         firstname = "Super",
                         lastname = "Admin",
                         gender_id = 1,
-                        birthdate = new DateTime(2024, 01, 01, 0, 0, 0, DateTimeKind.Utc),
+                        birthdate = new DateOnly(2024, 01, 01),
                         phone_number = "0123456789",
                         recovery_code = "123456",
                         recovery_expiration = new DateTime(2024, 01, 01, 0, 0, 0, DateTimeKind.Utc),

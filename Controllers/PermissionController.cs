@@ -1,11 +1,11 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using thaicodelab_api.Helpers;
-using thaicodelab_api.Services; 
+using thaicodelab_api.Services;
 
 [Route("api/[controller]")]
 [ApiController]
-[Authorize] 
+[Authorize]
 public class PermissionController : ControllerBase
 {
     private readonly PermissionService _permissionService;
@@ -19,7 +19,7 @@ public class PermissionController : ControllerBase
     public async Task<IActionResult> GetAll()
     {
         var result = await _permissionService.GetAllPermissions();
-        return Ok(new 
+        return Ok(new
         {
             status = true,
             message = "Successfully Retrieved",
@@ -31,19 +31,29 @@ public class PermissionController : ControllerBase
     public async Task<IActionResult> GetById(int id)
     {
         var permission = await _permissionService.GetPermissionById(id);
-        if (permission == null) 
-            return NotFound(new 
+        if (permission == null)
+            return NotFound(new
             {
                 status = false,
                 message = "Permission not found"
             });
 
-        return Ok(new 
+        return Ok(new
         {
             status = true,
             message = "Successfully Retrieved",
             data = permission
         });
+    }
+
+    [HttpGet("Permission-Check")]
+    public Task<IActionResult> PermissionCheck()
+    {
+        return Task.FromResult<IActionResult>(Ok(new
+        {
+            status = true,
+            message = "Permission Check"
+        }));
     }
 
     [HttpPost]
@@ -55,8 +65,8 @@ public class PermissionController : ControllerBase
         permission.created_by = userId;
 
         await _permissionService.AddPermission(permission);
-        
-        return CreatedAtAction(nameof(GetById), new { id = permission.permission_id }, new 
+
+        return CreatedAtAction(nameof(GetById), new { id = permission.permission_id }, new
         {
             status = true,
             message = "Successfully Created",
@@ -69,17 +79,17 @@ public class PermissionController : ControllerBase
     {
         var userId = JwtHelper.GetUserIdFromToken(User);
         var permission = await _permissionService.GetPermissionById(id);
-        
-        if (permission == null) 
-            return NotFound(new 
+
+        if (permission == null)
+            return NotFound(new
             {
                 status = false,
                 message = "Permission not found"
             });
 
         await _permissionService.UpdatePermission(permission, updatedPermission, userId);
-        
-        return Ok(new 
+
+        return Ok(new
         {
             status = true,
             message = "Successfully Updated"
@@ -91,17 +101,17 @@ public class PermissionController : ControllerBase
     {
         var userId = JwtHelper.GetUserIdFromToken(User);
         var permission = await _permissionService.GetPermissionById(id);
-        
-        if (permission == null) 
-            return NotFound(new 
+
+        if (permission == null)
+            return NotFound(new
             {
                 status = false,
                 message = "Permission not found"
             });
 
         await _permissionService.SoftDeletePermission(permission, userId);
-        
-        return Ok(new 
+
+        return Ok(new
         {
             status = true,
             message = "Successfully Deleted"

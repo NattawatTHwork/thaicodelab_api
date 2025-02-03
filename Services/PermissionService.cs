@@ -16,6 +16,7 @@ namespace thaicodelab_api.Services
         {
             return await _context.tb_permissions
                 .Where(p => !p.is_deleted)
+                .OrderBy(p => p.permission_id)
                 .ToListAsync();
         }
 

@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -10,9 +11,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace thaicodelab_api.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250105125542_InitialCreate")]
+    partial class InitialCreate
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -558,8 +561,8 @@ namespace thaicodelab_api.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("user_id"));
 
-                    b.Property<DateOnly>("birthdate")
-                        .HasColumnType("date");
+                    b.Property<DateTime>("birthdate")
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<DateTime>("created_at")
                         .HasColumnType("timestamp with time zone");
@@ -646,7 +649,7 @@ namespace thaicodelab_api.Migrations
                         new
                         {
                             user_id = 1,
-                            birthdate = new DateOnly(2024, 1, 1),
+                            birthdate = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             created_at = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             created_by = 1,
                             department_id = 1,
@@ -663,7 +666,7 @@ namespace thaicodelab_api.Migrations
                             updated_at = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             updated_by = 1,
                             user_code = "USR0000001",
-                            user_password = "$2a$11$tfK5h9B0tIRWH1pkTbX6ke3rk4AOvaFhiHqbOvqQeMQdao5YyBSb.",
+                            user_password = "$2a$11$pLvW7AwwhWFEOld8e813VOi0Jsb.kg08zCac53HEJidYUEbRzfP42",
                             user_status_id = 1
                         });
                 });

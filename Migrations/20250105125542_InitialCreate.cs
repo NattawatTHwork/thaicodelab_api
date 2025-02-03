@@ -411,7 +411,7 @@ namespace thaicodelab_api.Migrations
                 schema: "sc_center_users",
                 table: "tb_users",
                 columns: new[] { "user_id", "birthdate", "created_at", "created_by", "department_id", "email", "firstname", "gender_id", "lastname", "phone_number", "rank_id", "recovery_code", "recovery_expiration", "role_id", "updated_at", "updated_by", "user_code", "user_password", "user_status_id" },
-                values: new object[] { 1, new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), 1, 1, "superadmin@superadmin.com", "Super", 1, "Admin", "0123456789", 1, "123456", new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), 1, new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), 1, "USR0000001", "$2a$11$e58ZE84k0srXQKoN/K0A..N3mMhZTL9rh3R3swHdOwOHj1YXXGF3e", 1 });
+                values: new object[] { 1, new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), 1, 1, "superadmin@superadmin.com", "Super", 1, "Admin", "0123456789", 1, "123456", new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), 1, new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), 1, "USR0000001", "$2a$11$pLvW7AwwhWFEOld8e813VOi0Jsb.kg08zCac53HEJidYUEbRzfP42", 1 });
 
             migrationBuilder.CreateIndex(
                 name: "IX_tb_equipment_groups_department_id",

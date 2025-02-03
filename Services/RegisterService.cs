@@ -55,7 +55,7 @@ namespace thaicodelab_api.Services
                 rank_id = request.rank_id,
                 user_status_id = request.user_status_id,
                 phone_number = request.phone_number,
-                birthdate = request.birthdate.ToUniversalTime(),
+                birthdate = request.birthdate,
                 created_by = request.created_by,
                 created_at = DateTime.UtcNow,
                 updated_by = request.created_by,

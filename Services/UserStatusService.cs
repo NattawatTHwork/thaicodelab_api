@@ -16,6 +16,7 @@ namespace thaicodelab_api.Services
         {
             return await _context.tb_user_status
                 .Where(us => !us.is_deleted)
+                .OrderBy(us => us.user_status_id)
                 .ToListAsync();
         }
 

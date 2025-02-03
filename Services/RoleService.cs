@@ -16,6 +16,7 @@ namespace thaicodelab_api.Services
         {
             return await _context.tb_roles
                 .Where(r => !r.is_deleted)
+                .OrderBy(r => r.role_id)
                 .ToListAsync();
         }
 
@@ -29,6 +30,7 @@ namespace thaicodelab_api.Services
         {
             var latestRole = await _context.tb_roles
                 .OrderByDescending(r => r.role_code)
+                .OrderBy(d => d.role_id)
                 .FirstOrDefaultAsync();
             
             string newCode = "ROE0000001";
