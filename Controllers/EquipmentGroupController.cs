@@ -49,7 +49,7 @@ public class EquipmentGroupController : ControllerBase
     [HttpGet("{id}")]
     public async Task<IActionResult> GetById(int id)
     {
-        var equipmentGroup = await _equipmentGroupService.GetEquipmentGroupById(id);
+        var equipmentGroup = await _equipmentGroupService.GetEquipmentGroupJoinDepartmentById(id);
         if (equipmentGroup == null) 
             return NotFound(new 
             {

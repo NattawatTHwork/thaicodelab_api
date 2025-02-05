@@ -19,6 +19,10 @@ public class Equipment
     [Range(1, int.MaxValue, ErrorMessage = "Equipment Type ID must be greater than 0")]
     public int equipment_type_id { get; set; }
 
+    [Required(ErrorMessage = "Equipment Status ID is required")]
+    [Range(1, int.MaxValue, ErrorMessage = "Equipment Status ID must be greater than 0")]
+    public int equipment_status_id { get; set; }
+
     public DateTime created_at { get; set; } = DateTime.UtcNow;
 
     public DateTime updated_at { get; set; } = DateTime.UtcNow;

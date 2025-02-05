@@ -1,14 +1,13 @@
 using System.ComponentModel.DataAnnotations;
 
-public class UserStatus
+public class EquipmentStatus
 {
-    [Key]
-    public int user_status_id { get; set; }
+    public int equipment_status_id { get; set; }
 
-    public string user_status_code { get; set; } = string.Empty;
+    public string equipment_status_code { get; set; } = string.Empty;
 
-    [MaxLength(50, ErrorMessage = "User Status Name must be less than 255 characters")]
-    public string user_status { get; set; } = string.Empty;
+    [MaxLength(50, ErrorMessage = "Status name must be less than 50 characters")]
+    public string equipment_status { get; set; } = string.Empty;
 
     public DateTime created_at { get; set; } = DateTime.UtcNow;
 

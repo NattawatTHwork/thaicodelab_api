@@ -18,6 +18,7 @@ public class ApplicationDbContext : DbContext
     public DbSet<EquipmentTransaction> tb_equipment_transactions { get; set; } = null!;
     public DbSet<EquipmentGroup> tb_equipment_groups { get; set; } = null!;
     public DbSet<EquipmentType> tb_equipment_types { get; set; } = null!;
+    public DbSet<EquipmentStatus> tb_equipment_status { get; set; } = null!;
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -222,16 +223,19 @@ public class ApplicationDbContext : DbContext
         modelBuilder.Entity<EquipmentTransaction>().ToTable("tb_equipment_transactions", "sc_equipments");
         modelBuilder.Entity<EquipmentGroup>().ToTable("tb_equipment_groups", "sc_equipments");
         modelBuilder.Entity<EquipmentType>().ToTable("tb_equipment_types", "sc_equipments");
+        modelBuilder.Entity<EquipmentStatus>().ToTable("tb_equipment_status", "sc_equipments");
 
         modelBuilder.Entity<Equipment>().HasKey(e => e.equipment_id);
         modelBuilder.Entity<EquipmentTransaction>().HasKey(et => et.equipment_transaction_id);
         modelBuilder.Entity<EquipmentGroup>().HasKey(eg => eg.equipment_group_id);
         modelBuilder.Entity<EquipmentType>().HasKey(et => et.equipment_type_id);
+        modelBuilder.Entity<EquipmentStatus>().HasKey(es => es.equipment_status_id);
 
         modelBuilder.Entity<Equipment>().Property(e => e.is_deleted).HasDefaultValue(false);
         modelBuilder.Entity<EquipmentTransaction>().Property(et => et.is_deleted).HasDefaultValue(false);
         modelBuilder.Entity<EquipmentGroup>().Property(eg => eg.is_deleted).HasDefaultValue(false);
         modelBuilder.Entity<EquipmentType>().Property(et => et.is_deleted).HasDefaultValue(false);
+        modelBuilder.Entity<EquipmentStatus>().Property(es => es.is_deleted).HasDefaultValue(false);
 
         modelBuilder.Entity<Equipment>()
             .HasOne<EquipmentGroup>()
@@ -268,5 +272,12 @@ public class ApplicationDbContext : DbContext
             .WithMany()
             .HasForeignKey(eg => eg.department_id)
             .OnDelete(DeleteBehavior.Restrict);
+
+        modelBuilder.Entity<Equipment>()
+            .HasOne<EquipmentStatus>()
+            .WithMany()
+            .HasForeignKey(e => e.equipment_status_id)
+            .OnDelete(DeleteBehavior.Restrict);
+
     }
 }
