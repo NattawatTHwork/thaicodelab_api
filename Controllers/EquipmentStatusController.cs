@@ -50,6 +50,7 @@ public class EquipmentStatusController : ControllerBase
     public async Task<IActionResult> Create([FromBody] EquipmentStatus equipmentStatus)
     {
         var userId = JwtHelper.GetUserIdFromToken(User);
+        equipmentStatus.equipment_status_code = await _equipmentStatusService.GenerateEquipmentStatusCode();
         equipmentStatus.created_at = DateTime.UtcNow;
         equipmentStatus.created_by = userId;
 

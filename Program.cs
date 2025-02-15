@@ -11,8 +11,10 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 
 builder.Services.AddScoped<EquipmentGroupService>();
 builder.Services.AddScoped<EquipmentService>();
-builder.Services.AddScoped<EquipmentTransactionService>();
+// builder.Services.AddScoped<EquipmentTransactionService>();
+// builder.Services.AddScoped<EquipmentTransactionDetailService>();
 builder.Services.AddScoped<EquipmentTypeService>();
+builder.Services.AddScoped<EquipmentStatusService>();
 builder.Services.AddScoped<GenderService>();
 builder.Services.AddScoped<LoginService>();
 builder.Services.AddScoped<PermissionService>();
