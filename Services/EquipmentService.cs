@@ -20,6 +20,14 @@ namespace thaicodelab_api.Services
                 .ToListAsync();
         }
 
+        public async Task<List<Equipment>> GetBorrowedEquipments()
+        {
+            return await _context.tb_equipments
+                .Where(e => e.equipment_status_id == 1 && !e.is_deleted)
+                .OrderBy(e => e.equipment_id)
+                .ToListAsync();
+        }
+
         public async Task<Equipment?> GetEquipmentById(int id)
         {
             return await _context.tb_equipments
@@ -31,34 +39,38 @@ namespace thaicodelab_api.Services
             var latestEquipment = await _context.tb_equipments
                 .OrderByDescending(e => e.equipment_code)
                 .FirstOrDefaultAsync();
-            
-            string newCode = "EQM0000001";
+
+            string newCode = "EQ0000001";
             if (latestEquipment != null && !string.IsNullOrEmpty(latestEquipment.equipment_code))
             {
                 var match = Regex.Match(latestEquipment.equipment_code, @"\d+");
                 if (match.Success)
                 {
                     int latestNumber = int.Parse(match.Value);
-                    newCode = $"EQM{(latestNumber + 1).ToString("D7")}";
+                    newCode = $"EQ{(latestNumber + 1).ToString("D7")}";
                 }
             }
             return newCode;
         }
 
-        public async Task AddEquipment(Equipment equipment)
+        public async Task<int> AddEquipment(Equipment equipment)
         {
             _context.tb_equipments.Add(equipment);
             await _context.SaveChangesAsync();
+            return equipment.equipment_id;
         }
 
-        public async Task UpdateEquipment(Equipment existingEquipment, Equipment updatedEquipment, int userId)
+        public async Task UpdateEquipment(Equipment equipment, Equipment updatedEquipment, int userId)
         {
-            existingEquipment.equipment = updatedEquipment.equipment;
-            existingEquipment.description = updatedEquipment.description;
-            existingEquipment.equipment_group_id = updatedEquipment.equipment_group_id;
-            existingEquipment.equipment_type_id = updatedEquipment.equipment_type_id;
-            existingEquipment.updated_by = userId;
-            existingEquipment.updated_at = DateTime.UtcNow;
+            equipment.equipment_code = updatedEquipment.equipment_code;
+            equipment.equipment_unique_code = updatedEquipment.equipment_unique_code;
+            equipment.equipment = updatedEquipment.equipment;
+            equipment.description = updatedEquipment.description;
+            equipment.equipment_group_id = updatedEquipment.equipment_group_id;
+            equipment.equipment_type_id = updatedEquipment.equipment_type_id;
+            equipment.equipment_status_id = updatedEquipment.equipment_status_id;
+            equipment.updated_at = DateTime.UtcNow;
+            equipment.updated_by = userId;
 
             await _context.SaveChangesAsync();
         }

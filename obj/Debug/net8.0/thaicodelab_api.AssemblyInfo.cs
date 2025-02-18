@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("thaicodelab_api")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+9b847820bf54cc15355ff561cadb05f044a65d55")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+9b77a5c2e48a6dddcdd8253f17b6ca43c46dc2e3")]
 [assembly: System.Reflection.AssemblyProductAttribute("thaicodelab_api")]
 [assembly: System.Reflection.AssemblyTitleAttribute("thaicodelab_api")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

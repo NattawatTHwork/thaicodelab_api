@@ -1,11 +1,11 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
-using thaicodelab_api.Helpers; 
-using thaicodelab_api.Services; 
+using thaicodelab_api.Helpers;
+using thaicodelab_api.Services;
 
 [Route("api/[controller]")]
 [ApiController]
-[Authorize] 
+[Authorize]
 public class EquipmentController : ControllerBase
 {
     private readonly EquipmentService _equipmentService;
@@ -19,7 +19,19 @@ public class EquipmentController : ControllerBase
     public async Task<IActionResult> GetAll()
     {
         var result = await _equipmentService.GetAllEquipments();
-        return Ok(new 
+        return Ok(new
+        {
+            status = true,
+            message = "Successfully Retrieved",
+            data = result
+        });
+    }
+
+    [HttpGet("borrowed")]
+    public async Task<IActionResult> GetBorrowedEquipments()
+    {
+        var result = await _equipmentService.GetBorrowedEquipments();
+        return Ok(new
         {
             status = true,
             message = "Successfully Retrieved",
@@ -31,14 +43,14 @@ public class EquipmentController : ControllerBase
     public async Task<IActionResult> GetById(int id)
     {
         var equipment = await _equipmentService.GetEquipmentById(id);
-        if (equipment == null) 
-            return NotFound(new 
+        if (equipment == null)
+            return NotFound(new
             {
                 status = false,
                 message = "Equipment not found"
             });
 
-        return Ok(new 
+        return Ok(new
         {
             status = true,
             message = "Successfully Retrieved",
@@ -55,8 +67,8 @@ public class EquipmentController : ControllerBase
         equipment.created_by = userId;
 
         await _equipmentService.AddEquipment(equipment);
-        
-        return CreatedAtAction(nameof(GetById), new { id = equipment.equipment_id }, new 
+
+        return CreatedAtAction(nameof(GetById), new { id = equipment.equipment_id }, new
         {
             status = true,
             message = "Successfully Created",
@@ -69,17 +81,17 @@ public class EquipmentController : ControllerBase
     {
         var userId = JwtHelper.GetUserIdFromToken(User);
         var equipment = await _equipmentService.GetEquipmentById(id);
-        
-        if (equipment == null) 
-            return NotFound(new 
+
+        if (equipment == null)
+            return NotFound(new
             {
                 status = false,
                 message = "Equipment not found"
             });
 
         await _equipmentService.UpdateEquipment(equipment, updatedEquipment, userId);
-        
-        return Ok(new 
+
+        return Ok(new
         {
             status = true,
             message = "Successfully Updated"
@@ -91,17 +103,17 @@ public class EquipmentController : ControllerBase
     {
         var userId = JwtHelper.GetUserIdFromToken(User);
         var equipment = await _equipmentService.GetEquipmentById(id);
-        
-        if (equipment == null) 
-            return NotFound(new 
+
+        if (equipment == null)
+            return NotFound(new
             {
                 status = false,
                 message = "Equipment not found"
             });
 
         await _equipmentService.SoftDeleteEquipment(equipment, userId);
-        
-        return Ok(new 
+
+        return Ok(new
         {
             status = true,
             message = "Successfully Deleted"

@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -10,9 +11,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace thaicodelab_api.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250217002728_AddEquipmentUniqueCodeToEquipment")]
+    partial class AddEquipmentUniqueCodeToEquipment
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -306,13 +309,13 @@ namespace thaicodelab_api.Migrations
                         .HasMaxLength(255)
                         .HasColumnType("character varying(255)");
 
-                    b.Property<int?>("operator_return_user_id")
+                    b.Property<int>("operator_return_user_id")
                         .HasColumnType("integer");
 
                     b.Property<DateTime>("return_timestamp")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<int?>("return_user_id")
+                    b.Property<int>("return_user_id")
                         .HasColumnType("integer");
 
                     b.Property<DateTime>("updated_at")
@@ -765,7 +768,7 @@ namespace thaicodelab_api.Migrations
                             updated_at = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             updated_by = 1,
                             user_code = "USR0000001",
-                            user_password = "$2a$11$4vQghuzXFFS2TkTWW.5pxe10zsji/JWLwbNPEetQtT120ctmfFnhC",
+                            user_password = "$2a$11$LbtheWxmMSAAULvHlhzZoO0o9o9z4rRXcR8PBmX1bmGaCxj4y7.Zm",
                             user_status_id = 1
                         });
                 });
@@ -901,12 +904,14 @@ namespace thaicodelab_api.Migrations
                     b.HasOne("User", null)
                         .WithMany()
                         .HasForeignKey("operator_return_user_id")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
                     b.HasOne("User", null)
                         .WithMany()
                         .HasForeignKey("return_user_id")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("User", b =>

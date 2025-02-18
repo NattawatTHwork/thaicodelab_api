@@ -43,6 +43,7 @@ namespace thaicodelab_api.Services
                 new Claim("user_id", user.user_id.ToString()),
                 new Claim("firstname", user.firstname),
                 new Claim("lastname", user.lastname),
+                new Claim("department_id", user.department_id.ToString()),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
             };
 

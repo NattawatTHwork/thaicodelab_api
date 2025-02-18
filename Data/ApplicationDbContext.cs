@@ -195,30 +195,30 @@ public class ApplicationDbContext : DbContext
         );
 
         modelBuilder.Entity<User>().HasData(
-                    new User
-                    {
-                        user_id = 1,
-                        user_code = "USR0000001",
-                        email = "superadmin@superadmin.com",
-                        user_password = BCrypt.Net.BCrypt.HashPassword("123456"),
-                        role_id = 1,
-                        department_id = 1,
-                        rank_id = 1,
-                        firstname = "Super",
-                        lastname = "Admin",
-                        gender_id = 1,
-                        birthdate = new DateOnly(2024, 01, 01),
-                        phone_number = "0123456789",
-                        recovery_code = "123456",
-                        recovery_expiration = new DateTime(2024, 01, 01, 0, 0, 0, DateTimeKind.Utc),
-                        created_at = new DateTime(2024, 01, 01, 0, 0, 0, DateTimeKind.Utc),
-                        updated_at = new DateTime(2024, 01, 01, 0, 0, 0, DateTimeKind.Utc),
-                        created_by = 1,
-                        updated_by = 1,
-                        user_status_id = 1,
-                        is_deleted = false
-                    }
-                );
+            new User
+            {
+                user_id = 1,
+                user_code = "USR0000001",
+                email = "superadmin@superadmin.com",
+                user_password = BCrypt.Net.BCrypt.HashPassword("123456"),
+                role_id = 1,
+                department_id = 1,
+                rank_id = 1,
+                firstname = "Super",
+                lastname = "Admin",
+                gender_id = 1,
+                birthdate = new DateOnly(2024, 01, 01),
+                phone_number = "0123456789",
+                recovery_code = "123456",
+                recovery_expiration = new DateTime(2024, 01, 01, 0, 0, 0, DateTimeKind.Utc),
+                created_at = new DateTime(2024, 01, 01, 0, 0, 0, DateTimeKind.Utc),
+                updated_at = new DateTime(2024, 01, 01, 0, 0, 0, DateTimeKind.Utc),
+                created_by = 1,
+                updated_by = 1,
+                user_status_id = 1,
+                is_deleted = false
+            }
+        );
 
         modelBuilder.Entity<Equipment>().ToTable("tb_equipments", "sc_equipments");
         modelBuilder.Entity<EquipmentTransaction>().ToTable("tb_equipment_transactions", "sc_equipments");
@@ -307,5 +307,29 @@ public class ApplicationDbContext : DbContext
             .HasForeignKey(e => e.equipment_status_id)
             .OnDelete(DeleteBehavior.Restrict);
 
+        modelBuilder.Entity<EquipmentStatus>().HasData(
+            new EquipmentStatus
+            {
+                equipment_status_id = 1,
+                equipment_status_code = "EQS0000001",
+                equipment_status = "Borrowed",
+                created_at = new DateTime(2024, 01, 01, 0, 0, 0, DateTimeKind.Utc),
+                updated_at = new DateTime(2024, 01, 01, 0, 0, 0, DateTimeKind.Utc),
+                created_by = 1,
+                updated_by = 1,
+                is_deleted = false
+            },
+            new EquipmentStatus
+            {
+                equipment_status_id = 2,
+                equipment_status_code = "EQS0000002",
+                equipment_status = "Returned",
+                created_at = new DateTime(2024, 01, 01, 0, 0, 0, DateTimeKind.Utc),
+                updated_at = new DateTime(2024, 01, 01, 0, 0, 0, DateTimeKind.Utc),
+                created_by = 1,
+                updated_by = 1,
+                is_deleted = false
+            }
+        );
     }
 }

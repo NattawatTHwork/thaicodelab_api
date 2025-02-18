@@ -5,6 +5,9 @@ public class Equipment
 
     public string equipment_code { get; set; } = string.Empty;
 
+    [MaxLength(50, ErrorMessage = "Equipment unique code must be less than 50 characters")]
+    public string equipment_unique_code { get; set; } = string.Empty;
+
     [MaxLength(50, ErrorMessage = "Equipment name must be less than 50 characters")]
     public string equipment { get; set; } = string.Empty;
 
