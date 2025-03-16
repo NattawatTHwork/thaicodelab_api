@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -10,9 +11,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace thaicodelab_api.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250315221453_UpdateBorrowUserId")]
+    partial class UpdateBorrowUserId
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -789,7 +792,7 @@ namespace thaicodelab_api.Migrations
                             updated_at = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             updated_by = 1,
                             user_code = "USR0000001",
-                            user_password = "$2a$11$30OrnsJNQ9alhAFKnjavA.BbIBcMg5wasbZaHKlv.mzqapXCb8SEC",
+                            user_password = "$2a$11$5WNfh7s1yE8GzycdcaDJI.vdCA26YegYu44DiIz7koaRFDAG8JjVq",
                             user_status_id = 1
                         });
                 });

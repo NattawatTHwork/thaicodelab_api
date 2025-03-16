@@ -17,7 +17,7 @@ public class EquipmentReturnRequest
 {
     public required List<EquipmentReturnDetail> equipment_return_details { get; set; } = new List<EquipmentReturnDetail>();
     public required int return_user_id { get; set; }
-    public required int operator_return_user_id { get; set; }
+    // public required int operator_return_user_id { get; set; }
 }
 
 public class EquipmentReturnDetail
@@ -39,11 +39,12 @@ public class EquipmentTransactionWithDetails
     public List<EquipmentTransactionDetail>? details { get; set; }
 }
 
-public class UnreturnedEquipmentWithGroup
+public class ReturnAndUnreturnedEquipmentWithGroup
 {
     public int equipment_id { get; set; }
     public string equipment { get; set; } = string.Empty;
     public string equipment_code { get; set; } = string.Empty;
+    public string equipment_unique_code { get; set; } = string.Empty;
     public int equipment_transaction_detail_id { get; set; }
     public int equipment_transaction_id { get; set; }
     public int equipment_group_id { get; set; }

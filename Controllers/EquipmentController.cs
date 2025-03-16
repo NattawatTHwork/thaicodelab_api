@@ -39,10 +39,50 @@ public class EquipmentController : ControllerBase
         });
     }
 
+    [HttpGet("borrowed-equipment-by-department")]
+    public async Task<IActionResult> GetBorrowedEquipmentByDepartments()
+    {
+        int departmentId = JwtHelper.GetDepartmentIdFromToken(User); // ดึง department_id จาก JWT
+
+        var result = await _equipmentService.GetBorrowedEquipmentByDepartments(departmentId);
+        return Ok(new
+        {
+            status = true,
+            message = "Successfully Retrieved",
+            data = result
+        });
+    }
+
+    [HttpGet("returned-equipment")]
+    public async Task<IActionResult> GetReturnedEquipments()
+    {
+        var result = await _equipmentService.GetReturnedEquipments();
+        return Ok(new
+        {
+            status = true,
+            message = "Successfully Retrieved",
+            data = result
+        });
+    }
+
+    [HttpGet("returned-equipment-by-department")]
+    public async Task<IActionResult> GetReturnedEquipmentByDepartments()
+    {
+        int departmentId = JwtHelper.GetDepartmentIdFromToken(User); // ดึง department_id จาก JWT
+
+        var result = await _equipmentService.GetReturnedEquipmentByDepartments(departmentId);
+        return Ok(new
+        {
+            status = true,
+            message = "Successfully Retrieved",
+            data = result
+        });
+    }
+
     [HttpGet("{id}")]
     public async Task<IActionResult> GetById(int id)
     {
-        var equipment = await _equipmentService.GetEquipmentById(id);
+        var equipment = await _equipmentService.GetEquipmentDataById(id);
         if (equipment == null)
             return NotFound(new
             {

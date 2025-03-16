@@ -225,23 +225,23 @@ namespace thaicodelab_api.Services
             }
         }
 
-        public async Task<List<UnreturnedEquipmentWithGroup>> GetUnreturnedEquipment()
+        public async Task<List<ReturnAndUnreturnedEquipmentWithGroup>> GetUnreturnedEquipment()
         {
             using (var scope = _scopeFactory.CreateScope())
             {
                 var _context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
 
                 var unreturnedEquipment = await _context.tb_equipment_transaction_details
-                    .Where(etd => etd.return_user_id == null && !etd.is_deleted) // เฉพาะที่ยังไม่ได้คืน และไม่ถูกลบ
+                    .Where(etd => etd.return_user_id == null && !etd.is_deleted)
                     .Join(_context.tb_equipments,
                         etd => etd.equipment_id,
                         e => e.equipment_id,
-                        (etd, e) => new { etd, e }) // เชื่อมกับ tb_equipments
+                        (etd, e) => new { etd, e })
                     .Join(_context.tb_equipment_groups,
                         join1 => join1.e.equipment_group_id,
                         eg => eg.equipment_group_id,
-                        (join1, eg) => new { join1.etd, join1.e, eg }) // เชื่อมกับ tb_equipment_groups
-                    .Select(join2 => new UnreturnedEquipmentWithGroup
+                        (join1, eg) => new { join1.etd, join1.e, eg })
+                    .Select(join2 => new ReturnAndUnreturnedEquipmentWithGroup
                     {
                         equipment_id = join2.e.equipment_id,
                         equipment = join2.e.equipment,
@@ -258,24 +258,59 @@ namespace thaicodelab_api.Services
             }
         }
 
-        public async Task<List<UnreturnedEquipmentWithGroup>> GetUnreturnedEquipmentByDepartment(int departmentId)
+        public async Task<List<ReturnAndUnreturnedEquipmentWithGroup>> GetUnreturnedEquipmentByDepartment(int departmentId)
         {
             using (var scope = _scopeFactory.CreateScope())
             {
                 var _context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
 
                 var unreturnedEquipment = await _context.tb_equipment_transaction_details
-                    .Where(etd => etd.return_user_id == null && !etd.is_deleted) // เฉพาะที่ยังไม่ได้คืน และไม่ถูกลบ
+                    .Where(etd => etd.return_user_id == null && !etd.is_deleted)
                     .Join(_context.tb_equipments,
                         etd => etd.equipment_id,
                         e => e.equipment_id,
-                        (etd, e) => new { etd, e }) // เชื่อมกับ tb_equipments
+                        (etd, e) => new { etd, e })
                     .Join(_context.tb_equipment_groups,
                         join1 => join1.e.equipment_group_id,
                         eg => eg.equipment_group_id,
-                        (join1, eg) => new { join1.etd, join1.e, eg }) // เชื่อมกับ tb_equipment_groups
-                    .Where(join2 => join2.eg.department_id == departmentId) // กรองตาม department_id
-                    .Select(join2 => new UnreturnedEquipmentWithGroup
+                        (join1, eg) => new { join1.etd, join1.e, eg })
+                    .Where(join2 => join2.eg.department_id == departmentId)
+                    .Select(join2 => new ReturnAndUnreturnedEquipmentWithGroup
+                    {
+                        equipment_id = join2.e.equipment_id,
+                        equipment = join2.e.equipment,
+                        equipment_code = join2.e.equipment_code,
+                        equipment_unique_code = join2.e.equipment_unique_code,
+                        equipment_transaction_detail_id = join2.etd.equipment_transaction_detail_id,
+                        equipment_transaction_id = join2.etd.equipment_transaction_id,
+                        equipment_group_id = join2.eg.equipment_group_id,
+                        equipment_group = join2.eg.equipment_group,
+                        department_id = join2.eg.department_id
+                    })
+                    .ToListAsync();
+
+                return unreturnedEquipment;
+            }
+        }
+
+        public async Task<List<ReturnAndUnreturnedEquipmentWithGroup>> GetReturnedEquipmentByDepartment(int departmentId)
+        {
+            using (var scope = _scopeFactory.CreateScope())
+            {
+                var _context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+
+                var unreturnedEquipment = await _context.tb_equipment_transaction_details
+                    .Where(etd => etd.return_user_id != null && !etd.is_deleted)
+                    .Join(_context.tb_equipments,
+                        etd => etd.equipment_id,
+                        e => e.equipment_id,
+                        (etd, e) => new { etd, e })
+                    .Join(_context.tb_equipment_groups,
+                        join1 => join1.e.equipment_group_id,
+                        eg => eg.equipment_group_id,
+                        (join1, eg) => new { join1.etd, join1.e, eg })
+                    .Where(join2 => join2.eg.department_id == departmentId)
+                    .Select(join2 => new ReturnAndUnreturnedEquipmentWithGroup
                     {
                         equipment_id = join2.e.equipment_id,
                         equipment = join2.e.equipment,

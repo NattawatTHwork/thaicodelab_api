@@ -91,8 +91,8 @@ public class EquipmentTransactionController : ControllerBase
         var transaction = new EquipmentTransaction
         {
             equipment_transaction_code = await _equipmentTransactionService.GenerateEquipmentTransactionCode(),
-            approve_user_id = request.approve_user_id,
-            operator_borrow_user_id = request.operator_borrow_user_id,
+            approve_user_id = userId,  // request.approve_user_id เป็นหลักเมื่อมีผู้อนุมัติ
+            operator_borrow_user_id = userId, // request.operator_borrow_user_id เป็นหลักเมื่อมีผู้อนุมัติ
             borrow_user_id = request.borrow_user_id,
             borrow_timestamp = DateTime.UtcNow,
             note = request.note,
@@ -132,8 +132,10 @@ public class EquipmentTransactionController : ControllerBase
             });
         }
 
+        var userId = JwtHelper.GetUserIdFromToken(User);
+
         var updatedCount = await _equipmentTransactionService.ReturnEquipmentTransaction(
-            request.equipment_return_details, request.return_user_id, request.operator_return_user_id
+            request.equipment_return_details, request.return_user_id, userId // request.operator_return_user_id เป็นหลักเมื่อมีผู้อนุมัติ
         );
 
         if (updatedCount == 0)
@@ -179,7 +181,7 @@ public class EquipmentTransactionController : ControllerBase
     {
         try
         {
-            int departmentId = JwtHelper.GetDepartmentIdFromToken(User); // ดึง department_id จาก JWT
+            int departmentId = JwtHelper.GetDepartmentIdFromToken(User);
 
             var unreturnedEquipment = await _equipmentTransactionService.GetUnreturnedEquipmentByDepartment(departmentId);
 
@@ -195,5 +197,28 @@ public class EquipmentTransactionController : ControllerBase
             return Unauthorized(new { status = false, message = ex.Message });
         }
     }
+
+    [HttpGet("returned-equipment-by-department")] // อุปกรณ์คืนแล้วแต่ละ department
+    public async Task<IActionResult> GetReturnedEquipmentByDepartment()
+    {
+        try
+        {
+            int departmentId = JwtHelper.GetDepartmentIdFromToken(User);
+
+            var unreturnedEquipment = await _equipmentTransactionService.GetReturnedEquipmentByDepartment(departmentId);
+
+            return Ok(new
+            {
+                status = true,
+                message = "Successfully Retrieved",
+                data = unreturnedEquipment
+            });
+        }
+        catch (UnauthorizedAccessException ex)
+        {
+            return Unauthorized(new { status = false, message = ex.Message });
+        }
+    }
+
 
 }
