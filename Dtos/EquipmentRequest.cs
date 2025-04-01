@@ -14,4 +14,10 @@ public class EquipmentRequest
     public int equipment_status_id { get; set; }
     public string equipment_status_code { get; set; } = string.Empty;
     public string equipment_status { get; set; } = string.Empty;
+    public int borrow_user_id { get; set; }
+    public string firstname { get; set; } = string.Empty;
+    public string lastname { get; set; } = string.Empty;
+    public string full_rank { get; set; } = string.Empty;
+    public string short_rank { get; set; } = string.Empty;
+
 }

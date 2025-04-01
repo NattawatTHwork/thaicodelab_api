@@ -11,8 +11,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace thaicodelab_api.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250126044335_ChangeBirthdateToDate")]
-    partial class ChangeBirthdateToDate
+    [Migration("20250317124514_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -91,6 +91,9 @@ namespace thaicodelab_api.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("equipment_id"));
 
+                    b.Property<int?>("borrow_user_id")
+                        .HasColumnType("integer");
+
                     b.Property<DateTime>("created_at")
                         .HasColumnType("timestamp with time zone");
 
@@ -114,8 +117,16 @@ namespace thaicodelab_api.Migrations
                     b.Property<int>("equipment_group_id")
                         .HasColumnType("integer");
 
+                    b.Property<int>("equipment_status_id")
+                        .HasColumnType("integer");
+
                     b.Property<int>("equipment_type_id")
                         .HasColumnType("integer");
+
+                    b.Property<string>("equipment_unique_code")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
 
                     b.Property<bool>("is_deleted")
                         .ValueGeneratedOnAdd()
@@ -130,7 +141,11 @@ namespace thaicodelab_api.Migrations
 
                     b.HasKey("equipment_id");
 
+                    b.HasIndex("borrow_user_id");
+
                     b.HasIndex("equipment_group_id");
+
+                    b.HasIndex("equipment_status_id");
 
                     b.HasIndex("equipment_type_id");
 
@@ -181,6 +196,69 @@ namespace thaicodelab_api.Migrations
                     b.ToTable("tb_equipment_groups", "sc_equipments");
                 });
 
+            modelBuilder.Entity("EquipmentStatus", b =>
+                {
+                    b.Property<int>("equipment_status_id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("equipment_status_id"));
+
+                    b.Property<DateTime>("created_at")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("created_by")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("equipment_status")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
+
+                    b.Property<string>("equipment_status_code")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<bool>("is_deleted")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(false);
+
+                    b.Property<DateTime>("updated_at")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("updated_by")
+                        .HasColumnType("integer");
+
+                    b.HasKey("equipment_status_id");
+
+                    b.ToTable("tb_equipment_status", "sc_equipments");
+
+                    b.HasData(
+                        new
+                        {
+                            equipment_status_id = 1,
+                            created_at = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            created_by = 1,
+                            equipment_status = "Borrowed",
+                            equipment_status_code = "EQS0000001",
+                            is_deleted = false,
+                            updated_at = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            updated_by = 1
+                        },
+                        new
+                        {
+                            equipment_status_id = 2,
+                            created_at = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            created_by = 1,
+                            equipment_status = "Returned",
+                            equipment_status_code = "EQS0000002",
+                            is_deleted = false,
+                            updated_at = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            updated_by = 1
+                        });
+                });
+
             modelBuilder.Entity("EquipmentTransaction", b =>
                 {
                     b.Property<int>("equipment_transaction_id")
@@ -192,18 +270,15 @@ namespace thaicodelab_api.Migrations
                     b.Property<int>("approve_user_id")
                         .HasColumnType("integer");
 
-                    b.Property<int>("equipment_id")
+                    b.Property<DateTime>("borrow_timestamp")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("borrow_user_id")
                         .HasColumnType("integer");
 
                     b.Property<string>("equipment_transaction_code")
                         .IsRequired()
                         .HasColumnType("text");
-
-                    b.Property<DateTime>("equipment_transaction_timestamp")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<int>("equipment_transaction_user_id")
-                        .HasColumnType("integer");
 
                     b.Property<bool>("is_deleted")
                         .ValueGeneratedOnAdd()
@@ -215,7 +290,7 @@ namespace thaicodelab_api.Migrations
                         .HasMaxLength(255)
                         .HasColumnType("character varying(255)");
 
-                    b.Property<int>("status_equipment_transaction")
+                    b.Property<int>("operator_borrow_user_id")
                         .HasColumnType("integer");
 
                     b.Property<DateTime>("updated_at")
@@ -228,11 +303,67 @@ namespace thaicodelab_api.Migrations
 
                     b.HasIndex("approve_user_id");
 
-                    b.HasIndex("equipment_id");
+                    b.HasIndex("borrow_user_id");
 
-                    b.HasIndex("equipment_transaction_user_id");
+                    b.HasIndex("operator_borrow_user_id");
 
                     b.ToTable("tb_equipment_transactions", "sc_equipments");
+                });
+
+            modelBuilder.Entity("EquipmentTransactionDetail", b =>
+                {
+                    b.Property<int>("equipment_transaction_detail_id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("equipment_transaction_detail_id"));
+
+                    b.Property<int>("equipment_id")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("equipment_transaction_detail_code")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("equipment_transaction_id")
+                        .HasColumnType("integer");
+
+                    b.Property<bool>("is_deleted")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(false);
+
+                    b.Property<string>("note")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)");
+
+                    b.Property<int?>("operator_return_user_id")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("return_timestamp")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int?>("return_user_id")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("updated_at")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("updated_by")
+                        .HasColumnType("integer");
+
+                    b.HasKey("equipment_transaction_detail_id");
+
+                    b.HasIndex("equipment_id");
+
+                    b.HasIndex("equipment_transaction_id");
+
+                    b.HasIndex("operator_return_user_id");
+
+                    b.HasIndex("return_user_id");
+
+                    b.ToTable("tb_equipment_transaction_details", "sc_equipments");
                 });
 
             modelBuilder.Entity("EquipmentType", b =>
@@ -666,7 +797,7 @@ namespace thaicodelab_api.Migrations
                             updated_at = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             updated_by = 1,
                             user_code = "USR0000001",
-                            user_password = "$2a$11$tfK5h9B0tIRWH1pkTbX6ke3rk4AOvaFhiHqbOvqQeMQdao5YyBSb.",
+                            user_password = "$2a$11$Pq6oY4SQS2fYeG7zrGZfM.cT17LfNyxHnReu8fDV0LWEwuFDz4Q5C",
                             user_status_id = 1
                         });
                 });
@@ -698,8 +829,8 @@ namespace thaicodelab_api.Migrations
 
                     b.Property<string>("user_status")
                         .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("character varying(255)");
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
 
                     b.Property<string>("user_status_code")
                         .IsRequired()
@@ -736,9 +867,20 @@ namespace thaicodelab_api.Migrations
 
             modelBuilder.Entity("Equipment", b =>
                 {
+                    b.HasOne("User", null)
+                        .WithMany()
+                        .HasForeignKey("borrow_user_id")
+                        .OnDelete(DeleteBehavior.Restrict);
+
                     b.HasOne("EquipmentGroup", null)
                         .WithMany()
                         .HasForeignKey("equipment_group_id")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("EquipmentStatus", null)
+                        .WithMany()
+                        .HasForeignKey("equipment_status_id")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
@@ -766,17 +908,42 @@ namespace thaicodelab_api.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
+                    b.HasOne("User", null)
+                        .WithMany()
+                        .HasForeignKey("borrow_user_id")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("User", null)
+                        .WithMany()
+                        .HasForeignKey("operator_borrow_user_id")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("EquipmentTransactionDetail", b =>
+                {
                     b.HasOne("Equipment", null)
                         .WithMany()
                         .HasForeignKey("equipment_id")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("User", null)
+                    b.HasOne("EquipmentTransaction", null)
                         .WithMany()
-                        .HasForeignKey("equipment_transaction_user_id")
+                        .HasForeignKey("equipment_transaction_id")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
+
+                    b.HasOne("User", null)
+                        .WithMany()
+                        .HasForeignKey("operator_return_user_id")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("User", null)
+                        .WithMany()
+                        .HasForeignKey("return_user_id")
+                        .OnDelete(DeleteBehavior.Restrict);
                 });
 
             modelBuilder.Entity("User", b =>

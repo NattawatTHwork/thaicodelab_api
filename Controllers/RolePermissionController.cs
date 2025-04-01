@@ -1,11 +1,11 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using thaicodelab_api.Helpers;
-using thaicodelab_api.Services; 
+using thaicodelab_api.Services;
 
 [Route("api/[controller]")]
 [ApiController]
-[Authorize] 
+[Authorize]
 public class RolePermissionController : ControllerBase
 {
     private readonly RolePermissionService _rolePermissionService;
@@ -17,19 +17,36 @@ public class RolePermissionController : ControllerBase
         _userService = userService;
     }
 
+    // [HttpPost]
+    // public async Task<IActionResult> CreateMultiple([FromBody] dynamic request)
+    // {
+    //     var userId = JwtHelper.GetUserIdFromToken(User);
+    //     int roleId = request.role_id;
+    //     List<int> permissionIds = request.permission_id.ToObject<List<int>>();
+
+    //     await _rolePermissionService.CreateMultipleRolePermissions(roleId, permissionIds, userId);
+
+    //     return Ok(new
+    //     {
+    //         status = true,
+    //         message = "Role-Permissions updated successfully"
+    //     });
+    // }
     [HttpPost]
-    public async Task<IActionResult> CreateMultiple([FromBody] dynamic request)
+    public async Task<IActionResult> CreateMultiple([FromBody] RolePermissionRequest request)
     {
         var userId = JwtHelper.GetUserIdFromToken(User);
-        int roleId = request.role_id;
-        List<int> permissionIds = request.permission_id.ToObject<List<int>>();
 
-        await _rolePermissionService.CreateMultipleRolePermissions(roleId, permissionIds, userId);
-        
-        return Ok(new 
+        await _rolePermissionService.CreateMultipleRolePermissions(
+            request.role_id,
+            request.permission_ids,
+            userId
+        );
+
+        return Ok(new
         {
-            status = true, 
-            message = "Role-Permissions updated successfully" 
+            status = true,
+            message = "Role-Permissions updated successfully"
         });
     }
 
@@ -51,11 +68,11 @@ public class RolePermissionController : ControllerBase
 
         var permissions = await _rolePermissionService.GetPermissionsByRoleId(roleId.Value);
 
-        return Ok(new 
+        return Ok(new
         {
-            status = true, 
-            message = "Successfully Retrieved", 
-            data = permissions 
+            status = true,
+            message = "Successfully Retrieved",
+            data = permissions
         });
     }
 
@@ -63,11 +80,12 @@ public class RolePermissionController : ControllerBase
     public async Task<IActionResult> GetPermissionsByRoleId(int roleId)
     {
         var permissions = await _rolePermissionService.GetPermissionsByRoleId(roleId);
-        return Ok(new 
+        return Ok(new
         {
-            status = true, 
-            message = "Successfully Retrieved", 
-            data = permissions 
+            status = true,
+            message = "Successfully Retrieved",
+            data = permissions
         });
     }
+
 }

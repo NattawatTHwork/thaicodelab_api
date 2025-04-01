@@ -52,3 +52,28 @@ public class ReturnAndUnreturnedEquipmentWithGroup
     public int department_id { get; set; }
 }
 
+public class EquipmentTransactionDetailWithTransaction
+{
+    public int equipment_transaction_detail_id { get; set; }
+    public string equipment_transaction_detail_code { get; set; } = string.Empty;
+    public int equipment_transaction_id { get; set; }
+    public string equipment_transaction_code { get; set; } = string.Empty;
+    public int equipment_id { get; set; }
+    public string equipment_code { get; set; } = string.Empty;
+    // public string equipment_unique_code { get; set; } = string.Empty;
+    public string equipment { get; set; } = string.Empty;
+    public int? return_user_id { get; set; }
+    public string? return_user_name { get; set; }
+    public int? operator_return_user_id { get; set; }
+    public string? operator_return_user_name { get; set; }
+    public DateTime return_timestamp { get; set; }
+    public string note { get; set; } = string.Empty;
+    public int? borrow_user_id { get; set; }
+    public string? borrow_user_name { get; set; }
+    public int? approve_user_id { get; set; }
+    public string? approve_user_name { get; set; }
+    public DateTime borrow_timestamp { get; set; }
+    public DateTime updated_at { get; set; }
+    public int updated_by { get; set; }
+    public bool is_deleted { get; set; }
+}

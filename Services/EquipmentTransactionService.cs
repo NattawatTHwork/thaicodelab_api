@@ -52,6 +52,140 @@ namespace thaicodelab_api.Services
             }
         }
 
+        public async Task<List<EquipmentTransactionDetailWithTransaction>> GetEquipmentTransactionDetailsWithTransaction()
+        {
+            using (var scope = _scopeFactory.CreateScope())
+            {
+                var _context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+
+                var result = await (
+                    from detail in _context.tb_equipment_transaction_details
+                    join tran in _context.tb_equipment_transactions
+                        on detail.equipment_transaction_id equals tran.equipment_transaction_id
+                    join equip in _context.tb_equipments
+                        on detail.equipment_id equals equip.equipment_id
+
+                    // LEFT JOIN Users + Ranks
+                    join returnUser in _context.tb_users on detail.return_user_id equals returnUser.user_id into returnUserGroup
+                    from returnUser in returnUserGroup.DefaultIfEmpty()
+                    join returnRank in _context.tb_ranks on returnUser.rank_id equals returnRank.rank_id into returnRankGroup
+                    from returnRank in returnRankGroup.DefaultIfEmpty()
+
+                    join operatorReturnUser in _context.tb_users on detail.operator_return_user_id equals operatorReturnUser.user_id into operatorReturnUserGroup
+                    from operatorReturnUser in operatorReturnUserGroup.DefaultIfEmpty()
+                    join operatorReturnRank in _context.tb_ranks on operatorReturnUser.rank_id equals operatorReturnRank.rank_id into operatorReturnRankGroup
+                    from operatorReturnRank in operatorReturnRankGroup.DefaultIfEmpty()
+
+                    join borrowUser in _context.tb_users on tran.borrow_user_id equals borrowUser.user_id into borrowUserGroup
+                    from borrowUser in borrowUserGroup.DefaultIfEmpty()
+                    join borrowRank in _context.tb_ranks on borrowUser.rank_id equals borrowRank.rank_id into borrowRankGroup
+                    from borrowRank in borrowRankGroup.DefaultIfEmpty()
+
+                    join approveUser in _context.tb_users on tran.approve_user_id equals approveUser.user_id into approveUserGroup
+                    from approveUser in approveUserGroup.DefaultIfEmpty()
+                    join approveRank in _context.tb_ranks on approveUser.rank_id equals approveRank.rank_id into approveRankGroup
+                    from approveRank in approveRankGroup.DefaultIfEmpty()
+
+                    where !detail.is_deleted
+                    orderby detail.equipment_transaction_detail_id
+                    select new EquipmentTransactionDetailWithTransaction
+                    {
+                        equipment_transaction_detail_id = detail.equipment_transaction_detail_id,
+                        equipment_transaction_detail_code = detail.equipment_transaction_detail_code,
+                        equipment_transaction_id = detail.equipment_transaction_id,
+                        equipment_transaction_code = tran.equipment_transaction_code,
+                        equipment_id = detail.equipment_id,
+                        equipment_code = equip.equipment_code,
+                        // equipment_unique_code = equip.equipment_unique_code,
+                        equipment = equip.equipment_unique_code + " " + equip.equipment,
+                        return_user_id = detail.return_user_id,
+                        return_user_name = returnUser != null ? (returnRank.short_rank ?? "") + returnUser.firstname + " " + returnUser.lastname : null,
+                        operator_return_user_id = detail.operator_return_user_id,
+                        operator_return_user_name = operatorReturnUser != null ? (operatorReturnRank.short_rank ?? "") + operatorReturnUser.firstname + " " + operatorReturnUser.lastname : null,
+                        return_timestamp = detail.return_timestamp,
+                        note = detail.note,
+                        borrow_user_id = tran.borrow_user_id,
+                        borrow_user_name = borrowUser != null ? (borrowRank.short_rank ?? "") + borrowUser.firstname + " " + borrowUser.lastname : null,
+                        borrow_timestamp = tran.borrow_timestamp,
+                        approve_user_name = approveUser != null ? (approveRank.short_rank ?? "") + approveUser.firstname + " " + approveUser.lastname : null,
+                        approve_user_id = tran.approve_user_id,
+                        updated_at = detail.updated_at,
+                        updated_by = detail.updated_by,
+                        is_deleted = detail.is_deleted
+                    })
+                    .ToListAsync();
+
+                return result;
+            }
+        }
+
+        public async Task<List<EquipmentTransactionDetailWithTransaction>> GetEquipmentTransactionDetailsWithTransactionByEquipmentId(int equipmentId)
+        {
+            using (var scope = _scopeFactory.CreateScope())
+            {
+                var _context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+
+                var result = await (
+                    from detail in _context.tb_equipment_transaction_details
+                    join tran in _context.tb_equipment_transactions
+                        on detail.equipment_transaction_id equals tran.equipment_transaction_id
+                    join equip in _context.tb_equipments
+                        on detail.equipment_id equals equip.equipment_id
+
+                    // LEFT JOIN Users + Ranks
+                    join returnUser in _context.tb_users on detail.return_user_id equals returnUser.user_id into returnUserGroup
+                    from returnUser in returnUserGroup.DefaultIfEmpty()
+                    join returnRank in _context.tb_ranks on returnUser.rank_id equals returnRank.rank_id into returnRankGroup
+                    from returnRank in returnRankGroup.DefaultIfEmpty()
+
+                    join operatorReturnUser in _context.tb_users on detail.operator_return_user_id equals operatorReturnUser.user_id into operatorReturnUserGroup
+                    from operatorReturnUser in operatorReturnUserGroup.DefaultIfEmpty()
+                    join operatorReturnRank in _context.tb_ranks on operatorReturnUser.rank_id equals operatorReturnRank.rank_id into operatorReturnRankGroup
+                    from operatorReturnRank in operatorReturnRankGroup.DefaultIfEmpty()
+
+                    join borrowUser in _context.tb_users on tran.borrow_user_id equals borrowUser.user_id into borrowUserGroup
+                    from borrowUser in borrowUserGroup.DefaultIfEmpty()
+                    join borrowRank in _context.tb_ranks on borrowUser.rank_id equals borrowRank.rank_id into borrowRankGroup
+                    from borrowRank in borrowRankGroup.DefaultIfEmpty()
+
+                    join approveUser in _context.tb_users on tran.approve_user_id equals approveUser.user_id into approveUserGroup
+                    from approveUser in approveUserGroup.DefaultIfEmpty()
+                    join approveRank in _context.tb_ranks on approveUser.rank_id equals approveRank.rank_id into approveRankGroup
+                    from approveRank in approveRankGroup.DefaultIfEmpty()
+
+                    where !detail.is_deleted && detail.equipment_id == equipmentId
+                    orderby detail.equipment_transaction_detail_id
+                    select new EquipmentTransactionDetailWithTransaction
+                    {
+                        equipment_transaction_detail_id = detail.equipment_transaction_detail_id,
+                        equipment_transaction_detail_code = detail.equipment_transaction_detail_code,
+                        equipment_transaction_id = detail.equipment_transaction_id,
+                        equipment_transaction_code = tran.equipment_transaction_code,
+                        equipment_id = detail.equipment_id,
+                        equipment_code = equip.equipment_code,
+                        // equipment_unique_code = equip.equipment_unique_code,
+                        equipment = equip.equipment_unique_code + " " + equip.equipment,
+                        return_user_id = detail.return_user_id,
+                        return_user_name = returnUser != null ? (returnRank.short_rank ?? "") + returnUser.firstname + " " + returnUser.lastname : null,
+                        operator_return_user_id = detail.operator_return_user_id,
+                        operator_return_user_name = operatorReturnUser != null ? (operatorReturnRank.short_rank ?? "") + operatorReturnUser.firstname + " " + operatorReturnUser.lastname : null,
+                        return_timestamp = detail.return_timestamp,
+                        note = detail.note,
+                        borrow_user_id = tran.borrow_user_id,
+                        borrow_user_name = borrowUser != null ? (borrowRank.short_rank ?? "") + borrowUser.firstname + " " + borrowUser.lastname : null,
+                        borrow_timestamp = tran.borrow_timestamp,
+                        approve_user_name = approveUser != null ? (approveRank.short_rank ?? "") + approveUser.firstname + " " + approveUser.lastname : null,
+                        approve_user_id = tran.approve_user_id,
+                        updated_at = detail.updated_at,
+                        updated_by = detail.updated_by,
+                        is_deleted = detail.is_deleted
+                    })
+                    .ToListAsync();
+
+                return result;
+            }
+        }
+
         public async Task<EquipmentTransaction?> GetEquipmentTransactionById(int id)
         {
             using (var scope = _scopeFactory.CreateScope())
@@ -158,6 +292,7 @@ namespace thaicodelab_api.Services
                 foreach (var equipment in equipments)
                 {
                     equipment.equipment_status_id = 2; // กำลังถูกยืม
+                    equipment.borrow_user_id = equipmentTransaction.borrow_user_id; // กำหนดผู้ที่ยืม
                 }
 
                 await _context.SaveChangesAsync();
@@ -217,6 +352,7 @@ namespace thaicodelab_api.Services
                 foreach (var equipment in equipments)
                 {
                     equipment.equipment_status_id = 1; // คืนแล้ว
+                    equipment.borrow_user_id = null; // กำหนดผู้ที่คืน
                 }
 
                 await _context.SaveChangesAsync();
@@ -225,7 +361,7 @@ namespace thaicodelab_api.Services
             }
         }
 
-        public async Task<List<ReturnAndUnreturnedEquipmentWithGroup>> GetUnreturnedEquipment()
+        public async Task<List<ReturnAndUnreturnedEquipmentWithGroup>> GetUnreturnedEquipmentAll()
         {
             using (var scope = _scopeFactory.CreateScope())
             {
@@ -246,6 +382,7 @@ namespace thaicodelab_api.Services
                         equipment_id = join2.e.equipment_id,
                         equipment = join2.e.equipment,
                         equipment_code = join2.e.equipment_code,
+                        equipment_unique_code = join2.e.equipment_unique_code,
                         equipment_transaction_detail_id = join2.etd.equipment_transaction_detail_id,
                         equipment_transaction_id = join2.etd.equipment_transaction_id,
                         equipment_group_id = join2.eg.equipment_group_id,

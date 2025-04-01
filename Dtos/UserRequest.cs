@@ -25,6 +25,15 @@ public class UserAllRequest
     public string user_status { get; set; } = string.Empty;
 }
 
+public class UserNameRequest
+{
+    public string email { get; set; } = string.Empty;
+    public string role { get; set; } = string.Empty;
+    public string short_rank { get; set; } = string.Empty;
+    public string firstname { get; set; } = string.Empty;
+    public string lastname { get; set; } = string.Empty;
+}
+
 public class UserProfileRequest
 {
     public int user_id { get; set; }

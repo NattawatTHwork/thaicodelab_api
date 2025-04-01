@@ -13,6 +13,9 @@ public class Permission
     [MaxLength(255, ErrorMessage = "Description must be less than 255 characters")]
     public string description { get; set; } = string.Empty;
 
+    [MaxLength(50, ErrorMessage = "Module Name must be less than 50 characters")]
+    public string module { get; set; } = string.Empty;
+
     public DateTime created_at { get; set; } = DateTime.UtcNow;
 
     public DateTime updated_at { get; set; } = DateTime.UtcNow;

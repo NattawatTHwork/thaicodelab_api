@@ -14,6 +14,17 @@ namespace thaicodelab_api.Helpers
             throw new UnauthorizedAccessException("User ID not found in token.");
         }
 
+        public static int GetRoleIdFromToken(ClaimsPrincipal user)
+        {
+            var roleIdClaim = user.FindFirst("role_id")?.Value;
+            if (int.TryParse(roleIdClaim, out int roleId))
+            {
+                return roleId;
+            }
+            throw new UnauthorizedAccessException("Role ID not found in token.");
+        }
+
+
         public static int GetDepartmentIdFromToken(ClaimsPrincipal user)
         {
             var departmentIdClaim = user.FindFirst("department_id")?.Value;

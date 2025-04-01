@@ -18,7 +18,19 @@ public class EquipmentController : ControllerBase
     [HttpGet]
     public async Task<IActionResult> GetAll()
     {
-        var result = await _equipmentService.GetAllEquipments();
+        int roleId = JwtHelper.GetRoleIdFromToken(User);
+        List<EquipmentRequest> result; // Declare result before the if-else block
+
+        if (roleId == 1)
+        {
+            result = await _equipmentService.GetAllEquipments();
+        }
+        else
+        {
+            int departmentId = JwtHelper.GetDepartmentIdFromToken(User);
+            result = await _equipmentService.GetAllEquipmentByDepartments(departmentId);
+        }
+
         return Ok(new
         {
             status = true,
@@ -68,9 +80,20 @@ public class EquipmentController : ControllerBase
     [HttpGet("returned-equipment-by-department")]
     public async Task<IActionResult> GetReturnedEquipmentByDepartments()
     {
-        int departmentId = JwtHelper.GetDepartmentIdFromToken(User); // ดึง department_id จาก JWT
+        int roleId = JwtHelper.GetRoleIdFromToken(User);
 
-        var result = await _equipmentService.GetReturnedEquipmentByDepartments(departmentId);
+        List<Equipment> result;
+
+        if (roleId == 1)
+        {
+            result = await _equipmentService.GetReturnedEquipmentAll();
+        }
+        else
+        {
+            int departmentId = JwtHelper.GetDepartmentIdFromToken(User);
+            result = await _equipmentService.GetReturnedEquipmentByDepartments(departmentId);
+        }
+
         return Ok(new
         {
             status = true,
@@ -78,6 +101,7 @@ public class EquipmentController : ControllerBase
             data = result
         });
     }
+
 
     [HttpGet("{id}")]
     public async Task<IActionResult> GetById(int id)

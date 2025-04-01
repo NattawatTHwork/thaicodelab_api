@@ -11,8 +11,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace thaicodelab_api.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250315221453_UpdateBorrowUserId")]
-    partial class UpdateBorrowUserId
+    [Migration("20250331073901_UpdatePermissionModel")]
+    partial class UpdatePermissionModel
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -91,6 +91,9 @@ namespace thaicodelab_api.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("equipment_id"));
 
+                    b.Property<int?>("borrow_user_id")
+                        .HasColumnType("integer");
+
                     b.Property<DateTime>("created_at")
                         .HasColumnType("timestamp with time zone");
 
@@ -137,6 +140,8 @@ namespace thaicodelab_api.Migrations
                         .HasColumnType("integer");
 
                     b.HasKey("equipment_id");
+
+                    b.HasIndex("borrow_user_id");
 
                     b.HasIndex("equipment_group_id");
 
@@ -235,7 +240,7 @@ namespace thaicodelab_api.Migrations
                             equipment_status_id = 1,
                             created_at = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             created_by = 1,
-                            equipment_status = "Borrowed",
+                            equipment_status = "Returned",
                             equipment_status_code = "EQS0000001",
                             is_deleted = false,
                             updated_at = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
@@ -246,7 +251,7 @@ namespace thaicodelab_api.Migrations
                             equipment_status_id = 2,
                             created_at = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             created_by = 1,
-                            equipment_status = "Returned",
+                            equipment_status = "Borrowed",
                             equipment_status_code = "EQS0000002",
                             is_deleted = false,
                             updated_at = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
@@ -268,7 +273,7 @@ namespace thaicodelab_api.Migrations
                     b.Property<DateTime>("borrow_timestamp")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<int?>("borrow_user_id")
+                    b.Property<int>("borrow_user_id")
                         .HasColumnType("integer");
 
                     b.Property<string>("equipment_transaction_code")
@@ -476,6 +481,11 @@ namespace thaicodelab_api.Migrations
                         .HasColumnType("boolean")
                         .HasDefaultValue(false);
 
+                    b.Property<string>("module")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
+
                     b.Property<string>("permission")
                         .IsRequired()
                         .HasMaxLength(50)
@@ -503,6 +513,7 @@ namespace thaicodelab_api.Migrations
                             created_by = 1,
                             description = "index page",
                             is_deleted = false,
+                            module = "",
                             permission = "index",
                             permission_code = "PMS0000001",
                             updated_at = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
@@ -792,7 +803,7 @@ namespace thaicodelab_api.Migrations
                             updated_at = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             updated_by = 1,
                             user_code = "USR0000001",
-                            user_password = "$2a$11$5WNfh7s1yE8GzycdcaDJI.vdCA26YegYu44DiIz7koaRFDAG8JjVq",
+                            user_password = "$2a$11$JzKHa.72.5Oz1e6ranjXSe72IjMLWDPOSQdSIoGuugQcme32TSVKi",
                             user_status_id = 1
                         });
                 });
@@ -862,6 +873,11 @@ namespace thaicodelab_api.Migrations
 
             modelBuilder.Entity("Equipment", b =>
                 {
+                    b.HasOne("User", null)
+                        .WithMany()
+                        .HasForeignKey("borrow_user_id")
+                        .OnDelete(DeleteBehavior.Restrict);
+
                     b.HasOne("EquipmentGroup", null)
                         .WithMany()
                         .HasForeignKey("equipment_group_id")
@@ -901,7 +917,8 @@ namespace thaicodelab_api.Migrations
                     b.HasOne("User", null)
                         .WithMany()
                         .HasForeignKey("borrow_user_id")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
                     b.HasOne("User", null)
                         .WithMany()

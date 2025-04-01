@@ -15,16 +15,18 @@ public class Equipment
     public string description { get; set; } = string.Empty;
 
     [Required(ErrorMessage = "Equipment Group ID is required")]
-    [Range(1, int.MaxValue, ErrorMessage = "Equipment Group ID must be greater than 0")]
+    [Range(1, int.MaxValue, ErrorMessage = "Equipment Group ID must be a valid ID")]
     public int equipment_group_id { get; set; }
 
     [Required(ErrorMessage = "Equipment Type ID is required")]
-    [Range(1, int.MaxValue, ErrorMessage = "Equipment Type ID must be greater than 0")]
+    [Range(1, int.MaxValue, ErrorMessage = "Equipment Type ID must be a valid ID")]
     public int equipment_type_id { get; set; }
 
     [Required(ErrorMessage = "Equipment Status ID is required")]
-    [Range(1, int.MaxValue, ErrorMessage = "Equipment Status ID must be greater than 0")]
+    [Range(1, int.MaxValue, ErrorMessage = "Equipment Status ID must be a valid ID")]
     public int equipment_status_id { get; set; }
+
+    public int? borrow_user_id { get; set; }
 
     public DateTime created_at { get; set; } = DateTime.UtcNow;
 
@@ -33,7 +35,7 @@ public class Equipment
     public int created_by { get; set; }
 
     public int updated_by { get; set; }
-    
+
     public bool is_deleted { get; set; } = false;
 }
 

@@ -307,12 +307,18 @@ public class ApplicationDbContext : DbContext
             .HasForeignKey(e => e.equipment_status_id)
             .OnDelete(DeleteBehavior.Restrict);
 
+        modelBuilder.Entity<Equipment>()
+            .HasOne<User>()
+            .WithMany()
+            .HasForeignKey(e => e.borrow_user_id)
+            .OnDelete(DeleteBehavior.Restrict);
+
         modelBuilder.Entity<EquipmentStatus>().HasData(
             new EquipmentStatus
             {
                 equipment_status_id = 1,
                 equipment_status_code = "EQS0000001",
-                equipment_status = "Borrowed",
+                equipment_status = "Returned",
                 created_at = new DateTime(2024, 01, 01, 0, 0, 0, DateTimeKind.Utc),
                 updated_at = new DateTime(2024, 01, 01, 0, 0, 0, DateTimeKind.Utc),
                 created_by = 1,
@@ -323,7 +329,7 @@ public class ApplicationDbContext : DbContext
             {
                 equipment_status_id = 2,
                 equipment_status_code = "EQS0000002",
-                equipment_status = "Returned",
+                equipment_status = "Borrowed",
                 created_at = new DateTime(2024, 01, 01, 0, 0, 0, DateTimeKind.Utc),
                 updated_at = new DateTime(2024, 01, 01, 0, 0, 0, DateTimeKind.Utc),
                 created_by = 1,

@@ -41,6 +41,33 @@ public class EquipmentTransactionController : ControllerBase
         });
     }
 
+    [HttpGet("details-with-transaction")]
+    public async Task<IActionResult> GetEquipmentTransactionDetailsWithTransaction()
+    {
+        var details = await _equipmentTransactionService.GetEquipmentTransactionDetailsWithTransaction();
+
+        return Ok(new
+        {
+            status = true,
+            message = "Successfully Retrieved",
+            data = details
+        });
+    }
+
+    [HttpGet("details-with-transaction-by-equipment/{id}")]
+    public async Task<IActionResult> GetDetailsWithTransactionByEquipment([FromRoute] int id)
+    {
+        var details = await _equipmentTransactionService
+            .GetEquipmentTransactionDetailsWithTransactionByEquipmentId(id);
+
+        return Ok(new
+        {
+            status = true,
+            message = "Successfully Retrieved",
+            data = details
+        });
+    }
+
     [HttpGet("{id}")]
     public async Task<IActionResult> GetById(int id)
     {
@@ -160,7 +187,7 @@ public class EquipmentTransactionController : ControllerBase
     {
         try
         {
-            var unreturnedEquipment = await _equipmentTransactionService.GetUnreturnedEquipment();
+            var unreturnedEquipment = await _equipmentTransactionService.GetUnreturnedEquipmentAll();
 
             return Ok(new
             {
@@ -176,14 +203,26 @@ public class EquipmentTransactionController : ControllerBase
     }
 
 
-    [HttpGet("unreturned-equipment-by-department")] // อุปกรณ์ที่ยังไม่ได้คืนแต่ละ department
+    [HttpGet("unreturned-equipment-by-department")] // อุปกรณ์ที่ยังไม่ได้คืนแต่ละ department ถ้า role_id = 1 ดูได้ทั้งหมด
     public async Task<IActionResult> GetUnreturnedEquipmentByDepartment()
     {
         try
         {
-            int departmentId = JwtHelper.GetDepartmentIdFromToken(User);
+            int roleId = JwtHelper.GetRoleIdFromToken(User);
 
-            var unreturnedEquipment = await _equipmentTransactionService.GetUnreturnedEquipmentByDepartment(departmentId);
+            List<ReturnAndUnreturnedEquipmentWithGroup> unreturnedEquipment;
+
+            if (roleId == 1)
+            {
+                // สำหรับ Admin (ดูได้ทั้งหมด)
+                unreturnedEquipment = await _equipmentTransactionService.GetUnreturnedEquipmentAll();
+            }
+            else
+            {
+                // สำหรับผู้ใช้งานทั่วไป ดูเฉพาะแผนกตัวเอง
+                int departmentId = JwtHelper.GetDepartmentIdFromToken(User);
+                unreturnedEquipment = await _equipmentTransactionService.GetUnreturnedEquipmentByDepartment(departmentId);
+            }
 
             return Ok(new
             {
@@ -219,6 +258,4 @@ public class EquipmentTransactionController : ControllerBase
             return Unauthorized(new { status = false, message = ex.Message });
         }
     }
-
-
 }

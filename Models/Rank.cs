@@ -14,7 +14,7 @@ public class Rank
     public string short_rank { get; set; } = string.Empty;
 
     [Required(ErrorMessage = "Sequence is required")]
-    [Range(1, int.MaxValue, ErrorMessage = "Sequence must be greater than 0")]
+    [Range(1, int.MaxValue, ErrorMessage = "Sequence must be a valid ID")]
     public int sequence { get; set; }
 
     public DateTime created_at { get; set; } = DateTime.UtcNow;

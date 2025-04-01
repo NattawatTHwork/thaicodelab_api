@@ -42,6 +42,26 @@ namespace thaicodelab_api.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "tb_equipment_status",
+                schema: "sc_equipments",
+                columns: table => new
+                {
+                    equipment_status_id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    equipment_status_code = table.Column<string>(type: "text", nullable: false),
+                    equipment_status = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
+                    created_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    updated_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    created_by = table.Column<int>(type: "integer", nullable: false),
+                    updated_by = table.Column<int>(type: "integer", nullable: false),
+                    is_deleted = table.Column<bool>(type: "boolean", nullable: false, defaultValue: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_tb_equipment_status", x => x.equipment_status_id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "tb_equipment_types",
                 schema: "sc_equipments",
                 columns: table => new
@@ -173,7 +193,7 @@ namespace thaicodelab_api.Migrations
                     user_status_id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     user_status_code = table.Column<string>(type: "text", nullable: false),
-                    user_status = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false),
+                    user_status = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
                     created_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     updated_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     created_by = table.Column<int>(type: "integer", nullable: false),
@@ -229,7 +249,7 @@ namespace thaicodelab_api.Migrations
                     firstname = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false),
                     lastname = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false),
                     gender_id = table.Column<int>(type: "integer", nullable: false),
-                    birthdate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    birthdate = table.Column<DateOnly>(type: "date", nullable: false),
                     phone_number = table.Column<string>(type: "text", nullable: false),
                     recovery_code = table.Column<string>(type: "text", nullable: false),
                     recovery_expiration = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
@@ -281,6 +301,49 @@ namespace thaicodelab_api.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "tb_equipment_transactions",
+                schema: "sc_equipments",
+                columns: table => new
+                {
+                    equipment_transaction_id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    equipment_transaction_code = table.Column<string>(type: "text", nullable: false),
+                    approve_user_id = table.Column<int>(type: "integer", nullable: false),
+                    operator_borrow_user_id = table.Column<int>(type: "integer", nullable: false),
+                    borrow_user_id = table.Column<int>(type: "integer", nullable: false),
+                    borrow_timestamp = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    note = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false),
+                    updated_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    updated_by = table.Column<int>(type: "integer", nullable: false),
+                    is_deleted = table.Column<bool>(type: "boolean", nullable: false, defaultValue: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_tb_equipment_transactions", x => x.equipment_transaction_id);
+                    table.ForeignKey(
+                        name: "FK_tb_equipment_transactions_tb_users_approve_user_id",
+                        column: x => x.approve_user_id,
+                        principalSchema: "sc_center_users",
+                        principalTable: "tb_users",
+                        principalColumn: "user_id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_tb_equipment_transactions_tb_users_borrow_user_id",
+                        column: x => x.borrow_user_id,
+                        principalSchema: "sc_center_users",
+                        principalTable: "tb_users",
+                        principalColumn: "user_id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_tb_equipment_transactions_tb_users_operator_borrow_user_id",
+                        column: x => x.operator_borrow_user_id,
+                        principalSchema: "sc_center_users",
+                        principalTable: "tb_users",
+                        principalColumn: "user_id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "tb_equipments",
                 schema: "sc_equipments",
                 columns: table => new
@@ -288,10 +351,13 @@ namespace thaicodelab_api.Migrations
                     equipment_id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     equipment_code = table.Column<string>(type: "text", nullable: false),
+                    equipment_unique_code = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
                     equipment = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
                     description = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false),
                     equipment_group_id = table.Column<int>(type: "integer", nullable: false),
                     equipment_type_id = table.Column<int>(type: "integer", nullable: false),
+                    equipment_status_id = table.Column<int>(type: "integer", nullable: false),
+                    borrow_user_id = table.Column<int>(type: "integer", nullable: true),
                     created_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     updated_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     created_by = table.Column<int>(type: "integer", nullable: false),
@@ -309,27 +375,41 @@ namespace thaicodelab_api.Migrations
                         principalColumn: "equipment_group_id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
+                        name: "FK_tb_equipments_tb_equipment_status_equipment_status_id",
+                        column: x => x.equipment_status_id,
+                        principalSchema: "sc_equipments",
+                        principalTable: "tb_equipment_status",
+                        principalColumn: "equipment_status_id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
                         name: "FK_tb_equipments_tb_equipment_types_equipment_type_id",
                         column: x => x.equipment_type_id,
                         principalSchema: "sc_equipments",
                         principalTable: "tb_equipment_types",
                         principalColumn: "equipment_type_id",
                         onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_tb_equipments_tb_users_borrow_user_id",
+                        column: x => x.borrow_user_id,
+                        principalSchema: "sc_center_users",
+                        principalTable: "tb_users",
+                        principalColumn: "user_id",
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
-                name: "tb_equipment_transactions",
+                name: "tb_equipment_transaction_details",
                 schema: "sc_equipments",
                 columns: table => new
                 {
-                    equipment_transaction_id = table.Column<int>(type: "integer", nullable: false)
+                    equipment_transaction_detail_id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    equipment_transaction_code = table.Column<string>(type: "text", nullable: false),
+                    equipment_transaction_id = table.Column<int>(type: "integer", nullable: false),
+                    equipment_transaction_detail_code = table.Column<string>(type: "text", nullable: false),
                     equipment_id = table.Column<int>(type: "integer", nullable: false),
-                    approve_user_id = table.Column<int>(type: "integer", nullable: false),
-                    equipment_transaction_user_id = table.Column<int>(type: "integer", nullable: false),
-                    equipment_transaction_timestamp = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    status_equipment_transaction = table.Column<int>(type: "integer", nullable: false),
+                    operator_return_user_id = table.Column<int>(type: "integer", nullable: true),
+                    return_user_id = table.Column<int>(type: "integer", nullable: true),
+                    return_timestamp = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     note = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false),
                     updated_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     updated_by = table.Column<int>(type: "integer", nullable: false),
@@ -337,24 +417,31 @@ namespace thaicodelab_api.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_tb_equipment_transactions", x => x.equipment_transaction_id);
+                    table.PrimaryKey("PK_tb_equipment_transaction_details", x => x.equipment_transaction_detail_id);
                     table.ForeignKey(
-                        name: "FK_tb_equipment_transactions_tb_equipments_equipment_id",
+                        name: "FK_tb_equipment_transaction_details_tb_equipment_transactions_~",
+                        column: x => x.equipment_transaction_id,
+                        principalSchema: "sc_equipments",
+                        principalTable: "tb_equipment_transactions",
+                        principalColumn: "equipment_transaction_id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_tb_equipment_transaction_details_tb_equipments_equipment_id",
                         column: x => x.equipment_id,
                         principalSchema: "sc_equipments",
                         principalTable: "tb_equipments",
                         principalColumn: "equipment_id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_tb_equipment_transactions_tb_users_approve_user_id",
-                        column: x => x.approve_user_id,
+                        name: "FK_tb_equipment_transaction_details_tb_users_operator_return_u~",
+                        column: x => x.operator_return_user_id,
                         principalSchema: "sc_center_users",
                         principalTable: "tb_users",
                         principalColumn: "user_id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_tb_equipment_transactions_tb_users_equipment_transaction_us~",
-                        column: x => x.equipment_transaction_user_id,
+                        name: "FK_tb_equipment_transaction_details_tb_users_return_user_id",
+                        column: x => x.return_user_id,
                         principalSchema: "sc_center_users",
                         principalTable: "tb_users",
                         principalColumn: "user_id",
@@ -366,6 +453,16 @@ namespace thaicodelab_api.Migrations
                 table: "tb_departments",
                 columns: new[] { "department_id", "created_at", "created_by", "department", "department_code", "description", "updated_at", "updated_by" },
                 values: new object[] { 1, new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), 1, "Human Resources", "DEP0000001", "Human Resources", new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), 1 });
+
+            migrationBuilder.InsertData(
+                schema: "sc_equipments",
+                table: "tb_equipment_status",
+                columns: new[] { "equipment_status_id", "created_at", "created_by", "equipment_status", "equipment_status_code", "updated_at", "updated_by" },
+                values: new object[,]
+                {
+                    { 1, new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), 1, "Borrowed", "EQS0000001", new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), 1 },
+                    { 2, new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), 1, "Returned", "EQS0000002", new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), 1 }
+                });
 
             migrationBuilder.InsertData(
                 schema: "sc_center_users",
@@ -411,7 +508,7 @@ namespace thaicodelab_api.Migrations
                 schema: "sc_center_users",
                 table: "tb_users",
                 columns: new[] { "user_id", "birthdate", "created_at", "created_by", "department_id", "email", "firstname", "gender_id", "lastname", "phone_number", "rank_id", "recovery_code", "recovery_expiration", "role_id", "updated_at", "updated_by", "user_code", "user_password", "user_status_id" },
-                values: new object[] { 1, new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), 1, 1, "superadmin@superadmin.com", "Super", 1, "Admin", "0123456789", 1, "123456", new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), 1, new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), 1, "USR0000001", "$2a$11$pLvW7AwwhWFEOld8e813VOi0Jsb.kg08zCac53HEJidYUEbRzfP42", 1 });
+                values: new object[] { 1, new DateOnly(2024, 1, 1), new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), 1, 1, "superadmin@superadmin.com", "Super", 1, "Admin", "0123456789", 1, "123456", new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), 1, new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), 1, "USR0000001", "$2a$11$Pq6oY4SQS2fYeG7zrGZfM.cT17LfNyxHnReu8fDV0LWEwuFDz4Q5C", 1 });
 
             migrationBuilder.CreateIndex(
                 name: "IX_tb_equipment_groups_department_id",
@@ -420,28 +517,64 @@ namespace thaicodelab_api.Migrations
                 column: "department_id");
 
             migrationBuilder.CreateIndex(
+                name: "IX_tb_equipment_transaction_details_equipment_id",
+                schema: "sc_equipments",
+                table: "tb_equipment_transaction_details",
+                column: "equipment_id");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_tb_equipment_transaction_details_equipment_transaction_id",
+                schema: "sc_equipments",
+                table: "tb_equipment_transaction_details",
+                column: "equipment_transaction_id");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_tb_equipment_transaction_details_operator_return_user_id",
+                schema: "sc_equipments",
+                table: "tb_equipment_transaction_details",
+                column: "operator_return_user_id");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_tb_equipment_transaction_details_return_user_id",
+                schema: "sc_equipments",
+                table: "tb_equipment_transaction_details",
+                column: "return_user_id");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_tb_equipment_transactions_approve_user_id",
                 schema: "sc_equipments",
                 table: "tb_equipment_transactions",
                 column: "approve_user_id");
 
             migrationBuilder.CreateIndex(
-                name: "IX_tb_equipment_transactions_equipment_id",
+                name: "IX_tb_equipment_transactions_borrow_user_id",
                 schema: "sc_equipments",
                 table: "tb_equipment_transactions",
-                column: "equipment_id");
+                column: "borrow_user_id");
 
             migrationBuilder.CreateIndex(
-                name: "IX_tb_equipment_transactions_equipment_transaction_user_id",
+                name: "IX_tb_equipment_transactions_operator_borrow_user_id",
                 schema: "sc_equipments",
                 table: "tb_equipment_transactions",
-                column: "equipment_transaction_user_id");
+                column: "operator_borrow_user_id");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_tb_equipments_borrow_user_id",
+                schema: "sc_equipments",
+                table: "tb_equipments",
+                column: "borrow_user_id");
 
             migrationBuilder.CreateIndex(
                 name: "IX_tb_equipments_equipment_group_id",
                 schema: "sc_equipments",
                 table: "tb_equipments",
                 column: "equipment_group_id");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_tb_equipments_equipment_status_id",
+                schema: "sc_equipments",
+                table: "tb_equipments",
+                column: "equipment_status_id");
 
             migrationBuilder.CreateIndex(
                 name: "IX_tb_equipments_equipment_type_id",
@@ -484,7 +617,7 @@ namespace thaicodelab_api.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "tb_equipment_transactions",
+                name: "tb_equipment_transaction_details",
                 schema: "sc_equipments");
 
             migrationBuilder.DropTable(
@@ -496,7 +629,23 @@ namespace thaicodelab_api.Migrations
                 schema: "sc_center_users");
 
             migrationBuilder.DropTable(
+                name: "tb_equipment_transactions",
+                schema: "sc_equipments");
+
+            migrationBuilder.DropTable(
                 name: "tb_equipments",
+                schema: "sc_equipments");
+
+            migrationBuilder.DropTable(
+                name: "tb_equipment_groups",
+                schema: "sc_equipments");
+
+            migrationBuilder.DropTable(
+                name: "tb_equipment_status",
+                schema: "sc_equipments");
+
+            migrationBuilder.DropTable(
+                name: "tb_equipment_types",
                 schema: "sc_equipments");
 
             migrationBuilder.DropTable(
@@ -504,12 +653,8 @@ namespace thaicodelab_api.Migrations
                 schema: "sc_center_users");
 
             migrationBuilder.DropTable(
-                name: "tb_equipment_groups",
-                schema: "sc_equipments");
-
-            migrationBuilder.DropTable(
-                name: "tb_equipment_types",
-                schema: "sc_equipments");
+                name: "tb_departments",
+                schema: "sc_center_users");
 
             migrationBuilder.DropTable(
                 name: "tb_genders",
@@ -525,10 +670,6 @@ namespace thaicodelab_api.Migrations
 
             migrationBuilder.DropTable(
                 name: "tb_user_status",
-                schema: "sc_center_users");
-
-            migrationBuilder.DropTable(
-                name: "tb_departments",
                 schema: "sc_center_users");
         }
     }

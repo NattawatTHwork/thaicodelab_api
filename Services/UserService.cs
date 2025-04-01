@@ -12,46 +12,6 @@ namespace thaicodelab_api.Services
             _context = context;
         }
 
-        // public async Task<List<UserAllRequest>> GetAllUsers()
-        // {
-        //     var query = from u in _context.tb_users
-        //                 join r in _context.tb_roles on u.role_id equals r.role_id
-        //                 join d in _context.tb_departments on u.department_id equals d.department_id
-        //                 join rk in _context.tb_ranks on u.rank_id equals rk.rank_id
-        //                 join g in _context.tb_genders on u.gender_id equals g.gender_id
-        //                 join us in _context.tb_user_status on u.user_status_id equals us.user_status_id
-        //                 where !u.is_deleted
-        //                 orderby u.user_id
-        //                 select new UserAllRequest
-        //                 {
-        //                     user_id = u.user_id,
-        //                     user_code = u.user_code,
-        //                     email = u.email,
-        //                     role_id = r.role_id,
-        //                     role_code = r.role_code,
-        //                     role = r.role,
-        //                     department_id = d.department_id,
-        //                     department_code = d.department_code,
-        //                     department = d.department,
-        //                     rank_id = rk.rank_id,
-        //                     rank_code = rk.rank_code,
-        //                     full_rank = rk.full_rank,
-        //                     short_rank = rk.short_rank,
-        //                     firstname = u.firstname,
-        //                     lastname = u.lastname,
-        //                     gender_id = g.gender_id,
-        //                     gender_code = g.gender_code,
-        //                     gender = g.gender,
-        //                     birthdate = u.birthdate,
-        //                     phone_number = u.phone_number,
-        //                     user_status_id = us.user_status_id,
-        //                     user_status_code = us.user_status_code,
-        //                     user_status = us.user_status
-        //                 };
-
-        //     return await query.ToListAsync();
-        // }
-
         public async Task<List<UserAllRequest>> GetAllUsers()
         {
             return await _context.tb_users
@@ -109,53 +69,18 @@ namespace thaicodelab_api.Services
         {
             return await _context.tb_users
                 .Where(u => u.user_id == id && !u.is_deleted)
-                .Select(u => new
+                .Join(_context.tb_roles, u => u.role_id, r => r.role_id, (u, r) => new { u, r })
+                .Join(_context.tb_ranks, ur => ur.u.rank_id, rk => rk.rank_id, (ur, rk) => new { ur.u, ur.r, rk })
+                .Select(data => new UserNameRequest
                 {
-                    u.firstname,
-                    u.lastname,
-                    u.email
+                    email = data.u.email,
+                    role = data.r.role,
+                    short_rank = data.rk.short_rank,
+                    firstname = data.u.firstname,
+                    lastname = data.u.lastname,
                 })
                 .FirstOrDefaultAsync();
         }
-
-        // public async Task<UserProfileRequest?> GetUserProfileById(int id)
-        // {
-        //     var query = from u in _context.tb_users
-        //                 join r in _context.tb_roles on u.role_id equals r.role_id
-        //                 join d in _context.tb_departments on u.department_id equals d.department_id
-        //                 join rk in _context.tb_ranks on u.rank_id equals rk.rank_id
-        //                 join g in _context.tb_genders on u.gender_id equals g.gender_id
-        //                 join us in _context.tb_user_status on u.user_status_id equals us.user_status_id
-        //                 where u.user_id == id && !u.is_deleted
-        //                 select new UserProfileRequest
-        //                 {
-        //                     user_id = u.user_id,
-        //                     user_code = u.user_code,
-        //                     email = u.email,
-        //                     role_id = r.role_id,
-        //                     role_code = r.role_code,
-        //                     role = r.role,
-        //                     department_id = d.department_id,
-        //                     department_code = d.department_code,
-        //                     department = d.department,
-        //                     rank_id = rk.rank_id,
-        //                     rank_code = rk.rank_code,
-        //                     full_rank = rk.full_rank,
-        //                     short_rank = rk.short_rank,
-        //                     firstname = u.firstname,
-        //                     lastname = u.lastname,
-        //                     gender_id = g.gender_id,
-        //                     gender_code = g.gender_code,
-        //                     gender = g.gender,
-        //                     birthdate = u.birthdate,
-        //                     phone_number = u.phone_number,
-        //                     user_status_id = us.user_status_id,
-        //                     user_status_code = us.user_status_code,
-        //                     user_status = us.user_status
-        //                 };
-
-        //     return await query.FirstOrDefaultAsync();
-        // }
 
         public async Task<UserProfileRequest?> GetUserProfileById(int id)
         {
