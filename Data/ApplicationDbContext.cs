@@ -172,6 +172,7 @@ public class ApplicationDbContext : DbContext
                 permission_code = "PMS0000001",
                 permission = "index",
                 description = "index page",
+                module = "index",
                 created_at = new DateTime(2024, 01, 01, 0, 0, 0, DateTimeKind.Utc),
                 updated_at = new DateTime(2024, 01, 01, 0, 0, 0, DateTimeKind.Utc),
                 created_by = 1,
